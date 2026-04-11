@@ -1,23 +1,22 @@
 
-import express from 'express'
+import { type Application } from 'express'
 import path from 'path'
 import fs from 'fs'
-import { konsole } from '../..'
 
-export default function loadRoutes(
-    app: express.Express
+export default function registerRoutes(
+    app: Application
 ) {
-    const routesPath = path.join(__dirname, '..', "routes")
-    const files = fs.readdirSync(routesPath)
+    const dir = path.join(__dirname, '..', '..', "routes")
+    const files = fs.readdirSync(dir)
 
     files.forEach(async file => {
         if (!file.endsWith('.route.ts') && !file.endsWith('.route.js')) return
 
-        const filePath = path.join(routesPath, file)
+        const filePath = path.join(dir, file)
         const route = await import(filePath)
 
         if (!route.default) {
-            konsole.warn(`Route file ${file} does not export a default route`)
+            console.warn(`Route file ${file} does not export a default route`)
             return
         }
 
@@ -25,6 +24,6 @@ export default function loadRoutes(
         const routePath = routeName === "index.route" ? "/" : `/${routeName}`
 
         app.use(routePath, route.default)
-        konsole.debug(`Loaded route: ${routePath}`)
+        console.debug(`Loaded route: ${routePath}`)
     })
 }

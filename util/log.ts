@@ -15,11 +15,7 @@ const Colors = {
     purple: chalk.hex("#8839ef")
 }
 
-
-const Levels: Record<
-    LogLevel,
-    { label: string; color: (text: string) => string }
-> = {
+const Levels: Record < LogLevel, { label: string; color: (text: string) => string } > = {
     log: { label: "", color: Colors.gray },
     info: { label: "[INFO]", color: Colors.blue },
     warn: { label: "[WARN]", color: Colors.yellow },
@@ -62,9 +58,7 @@ function getCaller() {
     return `${path.basename(filePath)}:${line}`
 }
 
-export default function createLogger(
-    debug?: boolean
-) {
+export default function createLogger(debug?: boolean) {
     const debugMode = debug ?? false
 
     function write(level: LogLevel, ...args: unknown[]) {
@@ -85,20 +79,16 @@ export default function createLogger(
 
         process.stdout.write(output)
     }
-
-    const logger: Konsole = {
-        log: (...args) => write("log", ...args),
-        info: (...args) => write("info", ...args),
-        warn: (...args) => write("warn", ...args),
-        error: (...args) => write("error", ...args),
-        debug: (...args) => write("debug", ...args),
-        dev: (...args) => write("dev", ...args)
-    }
+    
+    console.log = (...args) => write("log", ...args)
+    console.info = (...args) => write("info", ...args)
+    console.warn = (...args) => write("warn", ...args)
+    console.error = (...args) => write("error", ...args)
 
     if (debug) {
-        logger.debug("Debug mode is enabled")
+        console.debug = (...args) => write("debug", ...args)
+        console.debug("Debug mode is enabled")
+    } else {
+        console.debug = () => {}
     }
-
-    logger.info("Logger Instance has been Created")
-    return logger
 }

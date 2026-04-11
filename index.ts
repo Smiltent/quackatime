@@ -1,7 +1,7 @@
 
-import DatabaseService from "./src/database/DatabaseService"
-import ExpressService from "./src/express/ExpressService"
-import createLogger from "./src/util/logging"
+import DatabaseService from "./services/Mongo"
+import ExpressService from "./services/Express"
+import createLogger from "./util/log"
 
 //
 // makes the services public

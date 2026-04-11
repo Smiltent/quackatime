@@ -1,6 +1,5 @@
 
-import loadRoutes from './routesLoader'
-import { konsole } from '../..'
+import loadRoutes from './express/registerRoutes'
 import express from 'express'
 
 export default class ExpressService {
@@ -15,7 +14,7 @@ export default class ExpressService {
         loadRoutes(this.app)
 
         this.app.listen(this.port, () => {
-            konsole.info(`Server running on http://0.0.0.0:${this.port}`)
+            console.info(`Server running on http://0.0.0.0:${this.port}`)
         })
     }
 }
