@@ -18,7 +18,7 @@ Hugely insprired by WakaTime and [Hackatime](https://github.com/hackclub/hackati
 * [ ] Weekly notifications via E-mail or Discord
 
 # Setup
-Rename [[.env.example]] to .env, configure values.
+Rename [.env.example](.env.example) to .env, configure values.
 
 Install the [Bun](https://bun.sh/) runtime. Then, run:
 ```sh
@@ -27,4 +27,4 @@ bun run prod
 The server will be active on `http://localhost:3000`!
 
 # License
-[[LICENSE]]
+[LICENSE](LICENSE)
