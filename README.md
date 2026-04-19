@@ -1,4 +1,4 @@
-<h1 align="center">Quackatime/h1>
+<h1 align="center">Quackatime</h1>
 <p align="center"><em>a WakaTime-compatible backend for coding statistics that Quacks</em></p>
 
 # About
@@ -18,7 +18,7 @@ Hugely insprired by WakaTime and [Hackatime](https://github.com/hackclub/hackati
 * [ ] Weekly notifications via E-mail or Discord
 
 # Setup
-Rename [.env.example] to .env, configure values.
+Rename [[.env.example]] to .env, configure values.
 
 Install the [Bun](https://bun.sh/) runtime. Then, run:
 ```sh
@@ -27,4 +27,4 @@ bun run prod
 The server will be active on `http://localhost:3000`!
 
 # License
-[LICENSE]
+[[LICENSE]]
