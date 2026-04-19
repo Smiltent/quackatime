@@ -1,7 +1,10 @@
 
-import DatabaseService from "./services/Mongo"
-import ExpressService from "./services/Express"
-import createLogger from "./util/log"
+import Express from "@/services/Express"
+import Mongo from "@/services/Mongo"
+
+import log from "@/util/log"
+require("dotenv").config()
+log(process.env.NODE_ENV == "dev")
 
 //
 // makes the services public
@@ -9,6 +12,5 @@ import createLogger from "./util/log"
 // incase of future use, where there might be a need to 
 // access services from different parts of the code
 //
-export const konsole = createLogger()
-export const expressService = new ExpressService()
-export const databaseService = new DatabaseService()
+export const expressService = new Express(process.env.WEB_PORT)
+export const databaseService = new Mongo(String(process.env.MONGODB_CONNECTION_STRING))

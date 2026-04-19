@@ -2,7 +2,7 @@
 import loadRoutes from './express/registerRoutes'
 import express from 'express'
 
-export default class ExpressService {
+export default class Express {
     private app: express.Express
 
     constructor(

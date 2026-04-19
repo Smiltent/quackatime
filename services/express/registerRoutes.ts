@@ -21,7 +21,7 @@ export default function registerRoutes(
         }
 
         const routeName = file.replace(/\.(ts|js)$/, "")
-        const routePath = routeName === "index.route" ? "/" : `/${routeName}`
+        const routePath = routeName === "root.route" ? "/" : `/${routeName}`
 
         app.use(routePath, route.default)
         console.debug(`Loaded route: ${routePath}`)
