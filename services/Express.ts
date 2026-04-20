@@ -4,10 +4,9 @@ import express from 'express'
 
 export default class Express {
     private app: express.Express
+    private port?: number | string = process.env.WEB_PORT
 
-    constructor(
-        private port: String | Number = 3000
-    ) {
+    constructor() {
         this.app = express()
 
         // automatically load all routes from /src/routes

@@ -1,28 +1,12 @@
 
 import chalk from "chalk"
-import util from "util"
 import path from "path"
 
-type LogLevel = "log" | "info" | "warn" | "error" | "debug" | "dev"
-export type Konsole = Record<LogLevel, (...args: unknown[]) => void>
-
-const Colors = {
-    gray: chalk.hex("#8c8c8c"),
-    red: chalk.hex("#d20f39"),
-    blue: chalk.hex("#1e66f5"),
-    yellow: chalk.hex("#dfbc1dff"),
-    orange: chalk.hex("#fe640b"),
-    purple: chalk.hex("#8839ef")
-}
-
-const Levels: Record < LogLevel, { label: string; color: (text: string) => string } > = {
-    log: { label: "", color: Colors.gray },
-    info: { label: "[INFO]", color: Colors.blue },
-    warn: { label: "[WARN]", color: Colors.yellow },
-    error: { label: "[ERROR]", color: Colors.red },
-    debug: { label: "[DEBUG]", color: Colors.orange },
-    dev: { label: "[DEV]", color: Colors.purple }
-}
+const YELLOW = chalk.bgHex("hsl(49, 77%, 49%)")
+const ORANGE = chalk.bgHex("#f05e0a")
+const BLUE = chalk.bgHex("#1e66f5")
+const GRAY = chalk.bgHex("#232634")
+const RED = chalk.bgHex("#d20f39")
 
 const timeFormatter = new Intl.DateTimeFormat("de-DE", {
     hour: "2-digit",
@@ -58,35 +42,22 @@ function getCaller() {
     return `${path.basename(filePath)}:${line}`
 }
 
-export default function createLogger(debug?: boolean) {
-    const debugMode = debug ?? false
-
-    function write(level: LogLevel, ...args: unknown[]) {
-        if (level === "debug" && !debug) return
-
+export default function log(debug: boolean = false) {
+    const base = (level: string, ...args: any[]) => {
         const caller = getCaller()
-        const time = getTime()
-        const formatted = util.format(...args)
 
-        const { label, color } = Levels[level]
-
-        const prefix =
-            `${Colors.gray(`[${caller}]`)} ` +
-            `${Colors.gray(time)} ` +
-            (label ? `${color(label)} ` : "")
-
-        const output = `${prefix}${formatted}\n`
-
-        process.stdout.write(output)
+        process.stdout.write(
+            `${level}${GRAY(` [${caller}] ${getTime()} `)} ${args}\n`
+        )
     }
-    
-    console.log = (...args) => write("log", ...args)
-    console.info = (...args) => write("info", ...args)
-    console.warn = (...args) => write("warn", ...args)
-    console.error = (...args) => write("error", ...args)
+
+    console.log = (...args) => base('', ...args)
+    console.info = (...args) => base(`${BLUE(' info ')}`, ...args)
+    console.warn = (...args) => base(`${YELLOW(' warn ')}`, ...args)
+    console.error = (...args) => base(`${RED(' error ')}`, ...args)
 
     if (debug) {
-        console.debug = (...args) => write("debug", ...args)
+        console.debug = (...args) => base(`${ORANGE(' debug ')}`, ...args)
         console.debug("Debug mode is enabled")
     } else {
         console.debug = () => {}
