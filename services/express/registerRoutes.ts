@@ -3,27 +3,34 @@ import { type Application } from 'express'
 import path from 'path'
 import fs from 'fs'
 
-export default function registerRoutes(
-    app: Application
-) {
+export default async function registerRoutes(app: Application) {
     const dir = path.join(__dirname, '..', '..', "routes")
-    const files = fs.readdirSync(dir)
-
-    files.forEach(async file => {
-        if (!file.endsWith('.route.ts') && !file.endsWith('.route.js')) return
-
-        const filePath = path.join(dir, file)
-        const route = await import(filePath)
-
-        if (!route.default) {
-            console.warn(`Route file ${file} does not export a default route`)
-            return
-        }
-
-        const routeName = file.replace(/\.(ts|js)$/, "")
-        const routePath = routeName === "root.route" ? "/" : `/${routeName}`
-
-        app.use(routePath, route.default)
-        console.debug(`Loaded route: ${routePath}`)
+    const files = fs.readdirSync(dir).filter(f => {
+        return f.endsWith(".routes.ts")
     })
+
+    for (const file of files) {
+        const fPath = path.join(dir, file)
+
+        const name = path.basename(file)
+            .replace(/\.routes.ts$/, "")
+            .replace(".", "/")
+
+        const mount = name === "root" ? "/" : `/${name}`
+
+        try {
+            const mod = await import(fPath)
+            const router = mod.default
+
+            if (!router || typeof router !== "function") {
+                console.warn(`Skipping ${file} - no default export!`)
+                continue
+            }
+
+            app.use(mount, router)
+            console.debug(`Mounted ${file} -> ${mount}`)
+        } catch (err) {
+            console.error(`Failed to load ${file}: ${err}`)
+        }
+    }
 }

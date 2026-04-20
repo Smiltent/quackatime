@@ -1,6 +1,7 @@
 
+import { PostgreSQL } from "@/services/PostgreSQL"
+import runMigrations from "@/services/sql/migrate"
 import Express from "@/services/Express"
-import Mongo from "@/services/Mongo"
 import log from "@/util/log"
 
 import path from "path"
@@ -11,13 +12,15 @@ import fs from "fs"
 const envArg = process.argv.find(a => a.startsWith("--env="))
 const env = envArg ? `.${envArg.split('=')[1]}`.toLowerCase() : ''
 
+const migArg = process.argv.find(a => a.startsWith("--migration"))
+const mig = migArg ? true : false
+
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // environment config
 require("dotenv").config({ 
     path: `.env${env}`
 })
 
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // logging
 log(env === ".dev")
 
@@ -34,12 +37,12 @@ await Bun.build({
     minify: env == "prod"
 })
 
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// services
+export const express = new Express()
+export const db = PostgreSQL
 
-//
-// makes the services public
-// 
-// incase of future use, where there might be a need to 
-// access services from different parts of the code
-//
-export const expressService = new Express()
-export const databaseService = new Mongo()
+// migrations
+if (mig) { 
+    runMigrations() 
+}

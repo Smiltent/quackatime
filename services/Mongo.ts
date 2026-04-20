@@ -1,6 +1,8 @@
 
 import mongoose from "mongoose"
 
+
+// Deprecated in favor of PostgreSQL.ts
 export default class Mongo {
     private uri?: string = String(process.env.MONGO_URI)
     
