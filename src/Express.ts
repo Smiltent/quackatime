@@ -1,15 +1,13 @@
 
 import root from "@/middlewares/root.middleware.ts"
-import loadRoutes from './express/registerRoutes'
 import cookieParser from "cookie-parser"
 import express from 'express'
 import path from 'path'
 
 export default class Express {
     private app: express.Express
-    private port?: number | string = process.env.WEB_PORT
 
-    constructor() {
+    constructor(private port?: number | string) {
         this.app = express()
 
         this.middleware()
@@ -28,7 +26,6 @@ export default class Express {
     private async routes() {
         this.app.use(root)
 
-        await loadRoutes(this.app)
 
         this.app.use((req, res) => {
             res.status(404).send("404")
