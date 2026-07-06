@@ -9,7 +9,6 @@ Hugely insprired by WakaTime and [Hackatime](https://github.com/hackclub/hackati
 * [ ] Friends
 * [ ] Poking (Shows a visual in Status bar)
 * [ ] Integration with GitHub
-* [ ] Authentication via SSO
 * [ ] Groups (Invite users or go solo and track multiple projects into one)
 * [ ] Badges
 * [ ] Leaderboards (Daily, Weekly, Friends, Total)
