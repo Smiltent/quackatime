@@ -11,11 +11,11 @@ export default class UserService {
 
     }
 
-    public static modify() {
+    public static destroy() {
 
     }
 
-    public static destroy() {
+    public static remove() {
 
     }
 

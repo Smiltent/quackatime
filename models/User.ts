@@ -7,7 +7,7 @@ const UserSchema = new Schema({
     email: { type: String, required: true, unique: true },
     
     role: { type: String, enum: ["user", "manager", "admin"], default: "user" },
-    country: { type: String, required: true }
+    country: { type: String }
 }, { timestamps: true })
 
 export default mongoose.model("User", UserSchema)

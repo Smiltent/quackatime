@@ -4,6 +4,9 @@ import cookieParser from "cookie-parser"
 import express from 'express'
 import path from 'path'
 
+import rootRoutes from "@/routes/root.routes"
+import authRoutes from "@/routes/auth.routes"
+
 export default class Express {
     private app: express.Express
 
@@ -26,6 +29,8 @@ export default class Express {
     private async routes() {
         this.app.use(root)
 
+        this.app.use("/", rootRoutes)
+        this.app.use("/auth", authRoutes)
 
         this.app.use((req, res) => {
             res.status(404).send("404")
