@@ -30,10 +30,10 @@ await Bun.build({
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 export let express: Express
 async function main() {
-    const db = new Database(process.env.MONGO_CONNECTION_STRING!)
+    const db = new Database(process.env.MONGO_URI!)
     await db.ready
 
-    express = new Express(process.env.EXPRESS_PORT!)
+    express = new Express(process.env.PORT!)
 }
 
 main()

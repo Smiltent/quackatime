@@ -11,7 +11,7 @@
     "start": "bun index.ts"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.10",
@@ -21,6 +21,6 @@
     "dotenv": "^17.4.2",
     "ejs": "^4.0.1",
     "express": "^5.2.1",
-    "mongoose": "^9.2.1"
+    "mongoose": "^9.7.3"
   }
 }
