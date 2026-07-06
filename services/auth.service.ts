@@ -1,10 +1,9 @@
 
+import Session from "@/models/Session"
 import type { Types } from "mongoose"
+import ApiKey from "@/models/ApiKey"
 import User from "@/models/User"
 import crypto from "crypto"
-import Session from "@/models/Session"
-import ApiKey from "@/models/ApiKey"
-import c from "@/public/js/example"
 
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30d
 
