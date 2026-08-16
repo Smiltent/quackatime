@@ -1,9 +1,10 @@
 
-import Session from "@/models/Session"
+import Session from "@/models/Session.ts"
+import ApiKey from "@/models/ApiKey.ts"
 import type { Types } from "mongoose"
-import ApiKey from "@/models/ApiKey"
-import User from "@/models/User"
-import crypto from "crypto"
+import User from "@/models/User.ts"
+import crypto from "node:crypto"
+import bcrypt from "bcrypt"
 
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30d
 
@@ -16,7 +17,7 @@ export default class AuthService {
         return User.create({
             username,
             email,
-            password: await Bun.password.hash(password)
+            password: await bcrypt.hash(password)
         })
     }
 
@@ -26,7 +27,7 @@ export default class AuthService {
         })
         if (!user) return null
 
-        const valid = await Bun.password.verify(password, user.password)
+        const valid = await bcrypt.verify(password, user.password)
         return valid ? user : null
     }
 

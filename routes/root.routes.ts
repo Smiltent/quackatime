@@ -1,8 +1,8 @@
 
-import { Router } from 'express'
+import { Request, Response, Router } from 'express'
 const router = Router()
 
-router.get("/", (req, res) => {
+router.get("/", (_req: Request, res: Response) => {
     res.send("wait so asdasdasdas WHAT!!!!")
 })
 

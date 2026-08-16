@@ -1,6 +1,6 @@
 
-import Heartbeat from "@/models/Heartbeat"
-import Project from "@/models/Project"
+import Heartbeat from "@/models/Heartbeat.ts"
+import Project from "@/models/Project.ts"
 import type { Types } from "mongoose"
 
 const categories = new Set([

@@ -1,6 +1,6 @@
 
-import AuthService, { SESSION_TTL_MS } from '@/services/auth.service'
-import { Router } from 'express'
+import AuthService, { SESSION_TTL_MS } from '@/services/auth.service.ts'
+import { Request, Response, Router } from 'express'
 const router = Router()
 
 const cookieSettings = {
@@ -10,7 +10,7 @@ const cookieSettings = {
     maxAge: SESSION_TTL_MS
 }
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req: Request, res: Response) => {
     const { login, password } = req.body ?? {}
     if (typeof login !== "string" || typeof password !== "string") {
         return res.status(400).json({ error: "Login and Password are required!" })
@@ -25,7 +25,7 @@ router.post("/login", async (req, res) => {
     res.json({ username: user.username}) // TODO: TEMPORARY!!
 })
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req: Request, res: Response) => {
     const { username, email, password } = req.body ?? {}
     if (typeof username !== "string" || typeof password !== "string" || typeof email !== "string") {
         return res.status(400).json({ error: "Username, Email and Password are required!" })
@@ -43,7 +43,7 @@ router.post("/register", async (req, res) => {
     res.json({ username: user.username })
 })
 
-router.post("/logout", async (req, res) => {
+router.post("/logout", async (req: Request, res: Response) => {
     await AuthService.destroySession(req.cookies?.session)
 
     res.clearCookie("session")

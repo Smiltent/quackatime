@@ -18,9 +18,9 @@ Hugely insprired by WakaTime and [Hackatime](https://github.com/hackclub/hackati
 
 # Setup
 Rename [.env.example](.env.example) to .env and configure values.
-Install the [Bun](https://bun.sh/) runtime. Then, run:
+Install the [Deno](https://deno.com/) runtime. Then, run:
 ```sh
-bun run prod
+deno run prod
 ```
 The server will be active on `http://localhost:3000`!
 
