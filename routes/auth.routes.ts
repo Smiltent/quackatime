@@ -1,14 +1,9 @@
 
-import AuthService, { SESSION_TTL_MS } from '@/services/auth.service.ts'
+import AuthService from '@/services/auth.service.ts'
 import { Request, Response, Router } from 'express'
-const router = Router()
+import { COOKIE_SETTINGS } from "@/util/config.ts"
 
-const cookieSettings = {
-    httpOnly: true,
-    sameSite: "lax" as const,
-    secure: process.env.NODE_DEV !== "dev",
-    maxAge: SESSION_TTL_MS
-}
+const router = Router()
 
 router.post("/login", async (req: Request, res: Response) => {
     const { login, password } = req.body ?? {}
@@ -16,13 +11,15 @@ router.post("/login", async (req: Request, res: Response) => {
         return res.status(400).json({ error: "Login and Password are required!" })
     }
 
+    // validate
     const user = await AuthService.login(login.trim(), password)
     if (!user) return res.status(401).json({ error: "Invalid Credentials" })
 
+    // create token
     const token = await AuthService.createSession(user._id)
 
-    res.cookie("session", token, cookieSettings)
-    res.json({ username: user.username}) // TODO: TEMPORARY!!
+    res.cookie("session", token, COOKIE_SETTINGS)
+    res.json({ username: user.username})
 })
 
 router.post("/register", async (req: Request, res: Response) => {
@@ -31,15 +28,19 @@ router.post("/register", async (req: Request, res: Response) => {
         return res.status(400).json({ error: "Username, Email and Password are required!" })
     }
 
-    if (password.length < 8) return res.status(400).json({ error: "Password must be at least 8 characters"}) // TODO: Find a different error code for this
+    if (password.length < 8) return res.status(400).json({ error: "Password must be at least 8 characters"})
 
+    // create the user
     const user = await AuthService.register(username.trim(), email.trim().toLowerCase(), password)
-    if (!user) return res.status(400).json({ error: "Username or Email already taken!" }) // TODO: same as line 34...
+    if (!user) return res.status(400).json({ error: "Username or Email already taken!" })
 
+    // create the session
     const token = await AuthService.createSession(user._id)
+
+    // create a wakatime compatible api key
     await AuthService.createApiKey(user._id)
 
-    res.cookie("session", token, cookieSettings)
+    res.cookie("session", token, COOKIE_SETTINGS)
     res.json({ username: user.username })
 })
 

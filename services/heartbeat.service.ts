@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 
 import Heartbeat from "@/models/Heartbeat.ts"
 import Project from "@/models/Project.ts"
@@ -36,6 +37,23 @@ export interface HeartbeatContext {
 }
 
 export default class HeartbeatService {
+    public static context(userAgent?: string, machine?: string): HeartbeatContext {
+        const ctx: HeartbeatContext = { machine: machine || undefined }
+        if (!userAgent) return ctx
+
+        const os = userAgent.match(/\(([^)]+)\)/)?.[1]
+        if (os) ctx.os = os.split("-")[0]
+
+        const pairs = [...userAgent.matchAll(/([\w.+-]+)\/[\w.+-]+/g)].map(m => m[1])
+        const plugin = pairs.at(-1)
+
+        if (plugin) {
+            const ide = plugin.replace(/-wakatime$/, "")
+            ctx.ide = ide === "wakatime" ? "wakatime-cli" : ide
+        }
+
+        return ctx
+    }
 
     private static async resolveProj(userId: Types.ObjectId, name?: string | null) {
         if (!name) return undefined
@@ -54,7 +72,8 @@ export default class HeartbeatService {
         heartbeat: IncomingHeartbeat,
         ctx: HeartbeatContext
     ) {
-        if (!heartbeat || typeof heartbeat.entity !== "string" || typeof heartbeat.time !== "number") {
+        const time = Number(heartbeat?.time)
+        if (!heartbeat || typeof heartbeat.entity !== "string" || !Number.isFinite(time)) {
             return { status: 400, body: { error: "Entity and Time are required!!!" }}
         }
 
@@ -68,7 +87,7 @@ export default class HeartbeatService {
             type,
             category,
 
-            time: heartbeat.time,
+            time,
             project: await this.resolveProj(userId, heartbeat.project),
             branch: heartbeat.branch ?? undefined,
             language: heartbeat.language ?? undefined,
@@ -90,18 +109,19 @@ export default class HeartbeatService {
             return { status: 201, body: { data: { id: created._id, entity: created.entity, time: created.time }}}
         } catch (err: any) {
             if (err?.code === 11000) {
-                return { status: 201, body: { data: { entity: heartbeat.entity, time: heartbeat.time }}}
+                return { status: 201, body: { data: { entity: heartbeat.entity, time }}}
             }
 
             if (err?.name === "ValidationError") {
                 return { status: 400, body: { error: err.message }}
             }
 
-            // throw err
+            console.error(`Failed to store heartbeat: ${err}`)
+            return { status: 500, body: { error: "Failed to store heartbeat" }}
         }
     }
 
-    public static async ingest(userId: Types.ObjectId, heartbeats: IncomingHeartbeat[], ctx: HeartbeatContext = {}) {
+    public static ingest(userId: Types.ObjectId, heartbeats: IncomingHeartbeat[], ctx: HeartbeatContext = {}) {
         return Promise.all(heartbeats.map(heartbeat => this.ingestOne(userId, heartbeat, ctx)))
     }
 }

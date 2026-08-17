@@ -1,4 +1,5 @@
 
+import { SESSION_TTL_MS } from "@/util/config.ts"
 import Session from "@/models/Session.ts"
 import ApiKey from "@/models/ApiKey.ts"
 import type { Types } from "mongoose"
@@ -6,10 +7,11 @@ import User from "@/models/User.ts"
 import crypto from "node:crypto"
 import bcrypt from "bcrypt"
 
-export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30d
-
 export default class AuthService {
-    // authentication
+
+    //? =-=-= USER AUTHENTICATION MANAGEMENT =-=-=
+
+    // user registration
     public static async register(username: string, email: string, password: string) {
         const exists = await User.exists({ $or: [{ username }, { email }]})
         if (exists) return null
@@ -21,6 +23,7 @@ export default class AuthService {
         })
     }
 
+    // user login
     public static async login(usernameOrEmail: string, password: string) {
         const user = await User.findOne({
             $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
@@ -31,7 +34,9 @@ export default class AuthService {
         return valid ? user : null
     }
 
-    // sessions
+    //? =-=-= USER SESSIONS MANAGEMENT =-=-=
+
+    // create a user session
     public static async createSession(userId: Types.ObjectId) {
         const token = crypto.randomBytes(32).toString("hex")
 
@@ -43,7 +48,8 @@ export default class AuthService {
 
         return token
     }
-
+    
+    // verify a user session
     public static async verifySession(token?: string) {
         if (!token) return null
 
@@ -56,16 +62,20 @@ export default class AuthService {
         return User.findById(session.user)
     }
 
+    // remove a session
     public static async destroySession(token?: string) {
         if (!token) return
         await Session.deleteOne({ token: crypto.createHash("sha256").update(token).digest("hex") })
     }
 
+    // destroy all sessions for a user
     public static async destroyAllSessions(userId: Types.ObjectId) {
         await Session.deleteMany({ user: userId })
     }
 
-    // wakatime compatible api keys
+    //? =-=-= WAKATIME COMPATIBLE API KEY MANAGEMENT =-=-=
+
+    // create a wakatime key
     public static async createApiKey(userId: Types.ObjectId) {
         const key = crypto.randomUUID()
 
@@ -74,6 +84,7 @@ export default class AuthService {
         return key
     }
 
+    // verify a wakatime key
     public static async verifyApiKey(auth?: string) {
         if (!auth) return null
 
@@ -91,6 +102,7 @@ export default class AuthService {
         return User.findById(apiKey.user)
     }
 
+    // revoke a wakatime key
     public static async revokeApiKey(userId: Types.ObjectId, key: string) {
         await ApiKey.deleteOne({ user: userId, key: crypto.createHash("sha256").update(key).digest("hex") })
     }
