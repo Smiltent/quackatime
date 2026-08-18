@@ -11,8 +11,9 @@ export async function reqAuth(req: Request, res: Response, next: NextFunction) {
     next()
 }
 
-export async function optionalAuth(req: Request, res: Response, next: NextFunction) {
-    // TODO: Maybe useful later, just an option
+// attaches req.user if a session exists, but doesn't block the request
+export async function optionalAuth(req: Request, _res: Response, next: NextFunction) {
+    req.user = (await AuthService.verifySession(req.cookies?.session)) ?? undefined
     next()
 }
 
