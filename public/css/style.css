@@ -1,0 +1,90 @@
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --text: #deeff2;
+    --background: #01090a;
+    --primary: #89cedc;
+    --secondary: #104c93;
+    --accent: #50c1d7;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text);
+    font-family: Roboto;
+}
+
+a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.container {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding-inline: 2rem;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0.75rem;
+    
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header img {
+    height: 1.5rem;
+    vertical-align: middle;
+}
+
+.header .left {
+    display: flex;
+    flex-direction: row;
+}
+
+.header .right {
+    font-size: 15px;
+    font-weight: 500;
+
+    align-items: center;
+
+    display: flex;
+    gap: 2.5rem;
+}
+
+.header .right *:not(:last-child) {
+    color: rgba(255, 255, 255, 0.5)
+}
+
+/* CONTENT */
+.content {
+    flex: 1;
+}
+
+/* FOOTER */
+.footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-block: 1rem;
+}
+
+/* BUTTONS */
+.auth-button {
+    background-color: var(--primary);
+    color: var(--background);
+    padding: 8px 20px;
+    border-radius: 10px;
+}
