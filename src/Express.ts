@@ -1,8 +1,10 @@
 
 import root from "@/middlewares/root.middleware.ts"
+import expressLayouts from 'express-ejs-layouts'
 import cookieParser from "cookie-parser"
+import git from "@/util/githash.ts"
 import express from 'express'
-import path from 'path'
+import path from 'node:path'
 
 import rootRoutes from "@/routes/root.routes.ts"
 import authRoutes from "@/routes/auth.routes.ts"
@@ -12,10 +14,15 @@ export default class Express {
 
     constructor(private port?: number | string) {
         this.app = express()
+        this.public()
+
+        const gitt = git()
+        this.app.locals.gitBranch = gitt.branch
+        this.app.locals.gitHash = gitt.hash
+        this.app.locals.gitUrl = gitt.url
 
         this.middleware()
         this.routes()
-        this.public()
         this.start()
     }
 
@@ -24,6 +31,10 @@ export default class Express {
         this.app.use(cookieParser())
         this.app.use(express.urlencoded({ extended: true }))
         this.app.use(express.static("public"))
+
+        this.app.set('view engine', "ejs")
+        this.app.set('layout', 'components/$layout')
+        this.app.use(expressLayouts)
     }
 
     private async routes() {
@@ -42,7 +53,7 @@ export default class Express {
 
         this.app.use(
             '/public',
-            express.static(path.join(__dirname, '..', 'public'), {
+            express.static(path.join(import.meta.dirname!, '..', 'public'), {
                 etag: !isDev,
                 lastModified: !isDev,
                 maxAge: isDev ? 0 : '10s',

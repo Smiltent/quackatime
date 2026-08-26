@@ -1,7 +1,38 @@
 
+import { dateKey, dayKey, digital, eachDay, endOfDay, human, startOfDay } from "@/util/time.ts"
 import Heartbeat from "@/models/Heartbeat.ts"
 import type { Types } from "mongoose"
-import { dateKey, dayKey, digital, eachDay, human } from "@/util/time.ts";
+
+export interface Bucket {
+    name: string
+    total_seconds: number
+    percent: number
+    text: string
+    digital: string
+    decimal: string
+    hours: number
+    minutes: number
+    seconds: number
+}
+
+export interface DayTotal {
+    date: string
+    total_seconds: number
+}
+
+export interface Aggregate {
+    total_seconds: number
+    projects: Bucket[]
+    languages: Bucket[]
+    editors: Bucket[]
+    oses: Bucket[]
+    machines: Bucket[]
+    categories: Bucket[]
+    branches: Bucket[]
+    days: DayTotal[]
+    heartbeats: number
+    last_heartbeat_at: number | null
+}
 
 interface HeartbeatLean {
     time: number
@@ -126,15 +157,30 @@ export default class StatsService {
         }
     }
 
-    public static today() {
-
+    public static today(userId: Types.ObjectId, project?: string) {
+        const now = new Date()
+        return this.aggregate(userId, startOfDay(now), endOfDay(now), project)
     }
 
-    public static range() {
+    public static range(userId: Types.ObjectId, days: number, project?: string) {
+        const now = new Date()
+        const from = startOfDay(new Date(now.getTime() - (days - 1) * 86400000))
 
+        return this.aggregate(userId, from, endOfDay(now), project)
     }
 
-    public static async allTime() {
+    public static async allTime(userId: Types.ObjectId, project?: string) {
+        const first = await Heartbeat.findOne({ user: userId }).sort({ time: 1}).lean()
+        const from = first ? new Date(first.time * 1000) : new Date()
 
+        return this.aggregate(userId, startOfDay(from), endOfDay(new Date()), project)
+    }
+
+    public static async firstHeartbeatAt(userId: Types.ObjectId) {
+        const first = await Heartbeat.findOne({ user: userId })
+            .sort({ time: 1})
+            .lean()
+
+        return first ? new Date(first.time * 1000) : null
     }
 }

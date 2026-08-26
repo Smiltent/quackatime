@@ -6,10 +6,8 @@ import log from "@/util/log.ts"
 // import path from "path"
 // import fs from "node:fs"
 
-const envArg = process.argv.find(a => a.startsWith("--env="))
-const env = envArg ? `${envArg.split('=')[1]}`.toLowerCase() : "prod"
 
-log(env === "dev")
+log(process.env.NODE_ENV === "dev")
 
 // const entries = fs.readdirSync("./private/ts")
 //     .filter(f => f.endsWith(".ts"))

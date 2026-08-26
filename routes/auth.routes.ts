@@ -69,34 +69,4 @@ router.get("/register", optionalAuth, (req: Request, res: Response) => {
     })
 })
 
-// lazy af, i want to do:
-// `<a href="/logout">logout button</a>`
-// instead of a POST request
-router.get("/logout", optionalAuth, (req: Request, res: Response) => {
-    if (!req.user) return res.redirect("/login")
-
-    res.send(`
-        <p>Logging out...</p>
-        <script>    
-            fetch('/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => {
-                if (response.ok) {
-                    window.location.href = "/"
-                } else {
-                    document.querySelector('p').textContent = 'Logout failed. Please try again later!'    
-                }
-            })
-            .catch(err => {
-                document.querySelector('p').textContent = 'Something went wrong...'
-            })
-        </script>
-    `)
-})
-
 export default router

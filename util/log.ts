@@ -21,25 +21,25 @@ function getTime() {
     return `${timeFormatter.format(d)}.${ms}`
 }
 
+const SELF = import.meta.url
 function getCaller() {
     const stack = new Error().stack
     if (!stack) return "unknown"
 
-    const lines = stack.split("\n")
-    
-    const callerLine = lines[3]
-    if (!callerLine) return "unknown"
+    for (const frame of stack.split("\n").slice(1)) {
+        const match = 
+            frame.match(/\((.*):(\d+):(\d+)\)/) ||
+            frame.match(/at (.*):(\d+):(\d+)/)
 
-    const match = 
-        callerLine.match(/\((.*):(\d+):(\d+)\)/) ||
-        callerLine.match(/at (.*):(\d+):(\d+)/)
+        if (!match) continue
 
-    if (!match) return "unknown"
+        const filePath = match[1] ?? ""
+        if (filePath === SELF) continue
 
-    const filePath = match[1] ?? ""
-    const line = match[2] ?? ""
+        return `${path.basename(filePath)}:${match[2]}` 
+    }
 
-    return `${path.basename(filePath)}:${line}`
+    return "unknown"
 }
 
 export default function log(debug: boolean = false) {

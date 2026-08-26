@@ -1,6 +1,8 @@
 
 import { optionalAuth, reqAuth } from "@/middlewares/auth.middleware.ts"
+import StatsService from "@/services/stats.service.ts"
 import { Request, Response, Router } from 'express'
+import Project from "@/models/Project.ts"
 
 const router = Router()
 const RANGE = {
@@ -29,14 +31,39 @@ router.get("/", optionalAuth, (req: Request, res: Response) => {
         res.render("dashboard")
     } else {
         // if unauthenticated, show lander (/)
-        res.render("index")
+        if (process.env.ENABLE_LANDER === "true") return res.render("lander")
+        res.redirect("/auth")
     }
+})
 
+router.get("/auth", optionalAuth, (req: Request, res: Response) => {
+    res.render('auth')
 })
 
 // projects
 router.get("/my/projects", reqAuth, async (req: Request, res: Response) => {
-    
+    const user = req.user!
+    const { range, days } = pickRange(req.query.range)
+
+    const [projects, period] = await Promise.all([
+        Project.find({ user: user._id }).sort({ name: 1 }).lean(),
+        StatsService.range(user._id, days)
+    ])
+
+    const totals = new Map(period.projects.map(p => [p.name, p]))
+
+    res.render("projects/index", {
+        range,
+        ranges: Object.keys(RANGE),
+        rows: projects
+            .map(p => ({
+                name: p.name,
+                repo: p.repo ?? null,
+                total_seconds: totals.get(p.name)?.total_seconds ?? 0,
+                text: totals.get(p.name)?.text ?? "0 secs"
+            }))
+            .sort((a, b) => b.total_seconds - a.total_seconds)
+    })
 })
 
 router.get("/my/projects/:name", reqAuth, async (req: Request, res: Response) => {
@@ -44,11 +71,14 @@ router.get("/my/projects/:name", reqAuth, async (req: Request, res: Response) =>
 })
 
 // lb
+/*
 router.get("/leaderboard", reqAuth, async (req: Request, res: Response) => {
 
 })
+*/
 
 // settings
+/*
 router.get("/my/settings", reqAuth, async (req: Request, res: Response) => {
 
 })
@@ -60,5 +90,6 @@ router.get("/my/settings/setup", reqAuth, async (req: Request, res: Response) =>
 router.get("/my/settings/security", reqAuth, async (req: Request, res: Response) => {
 
 })
+*/
 
 export default router

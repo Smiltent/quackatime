@@ -20,6 +20,20 @@ export function digital(sec: number) {
     return `${Math.floor(total / 3600)}:${String(Math.floor((total % 3600) / 60)).padStart(2, "0")}`
 }
 
+export function totals(sec: number) {
+    const total = Math.round(sec)
+
+    return {
+        decimal: (total / 3600).toFixed(2),
+        digital: digital(total),
+        hours: Math.floor(total / 3600),
+        minutes: Math.floor((total % 3600) / 60),
+        seconds: total % 60,
+        text: human(total),
+        total_seconds: total
+    }
+}
+
 export function dayKey(unix: number) {
     return dateKey(new Date(unix * 1000))
 }
