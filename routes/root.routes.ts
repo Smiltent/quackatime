@@ -30,14 +30,30 @@ router.get("/", optionalAuth, (req: Request, res: Response) => {
         // if authenticated, show dashboard (/dashboard)
         res.render("dashboard")
     } else {
-        // if unauthenticated, show lander (/)
-        if (process.env.ENABLE_LANDER === "true") return res.render("lander")
-        res.redirect("/auth")
+        // if unauthenticated, show auth
+        res.redirect("/login")
     }
 })
 
-router.get("/auth", optionalAuth, (req: Request, res: Response) => {
-    res.render('auth')
+// auth
+router.get("/login", optionalAuth, (req: Request, res: Response) => {
+    const user = req.user
+
+    if (!user) {
+        res.render("auth/login")
+    } else {
+        res.redirect("/")
+    }
+})
+
+router.get("/register", optionalAuth, (req: Request, res: Response) => {
+    const user = req.user
+
+    if (!user) {
+        res.render("auth/register")
+    } else {
+        res.redirect("/")
+    }
 })
 
 // projects

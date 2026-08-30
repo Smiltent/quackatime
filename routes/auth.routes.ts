@@ -20,7 +20,8 @@ router.post("/login", async (req: Request, res: Response) => {
     const token = await AuthService.createSession(user._id)
 
     res.cookie("session", token, COOKIE_SETTINGS)
-    res.json({ username: user.username})
+    // res.json({ username: user.username})
+    res.redirect("/")
 })
 
 router.post("/register", async (req: Request, res: Response) => {
@@ -42,7 +43,8 @@ router.post("/register", async (req: Request, res: Response) => {
     await AuthService.createApiKey(user._id)
 
     res.cookie("session", token, COOKIE_SETTINGS)
-    res.json({ username: user.username })
+    // res.json({ username: user.username })
+    res.redirect("/")
 })
 
 router.post("/logout", async (req: Request, res: Response) => {

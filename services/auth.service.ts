@@ -19,7 +19,7 @@ export default class AuthService {
         return User.create({
             username,
             email,
-            password: await bcrypt.hash(password)
+            password: await bcrypt.hash(password, 10)
         })
     }
 
@@ -30,7 +30,7 @@ export default class AuthService {
         })
         if (!user) return null
 
-        const valid = await bcrypt.verify(password, user.password)
+        const valid = await bcrypt.compare(password, user.password)
         return valid ? user : null
     }
 

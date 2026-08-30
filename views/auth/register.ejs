@@ -1,0 +1,14 @@
+<div class="flex-col auth">
+    <div>
+        <img src="/public/assets/logo.png" alt="Logo">
+    </div>
+
+    <form class="flex-col" action="/auth/register" method="POST">
+        <input type="text" name="username" maxlength="32" placeholder="username" autocomplete="off">
+        <input type="email" name="email" placeholder="your@email.com" autocomplete="off">
+        <input type="password" name="password" placeholder="password" autocomplete="new-password">
+        
+        <input type="submit" value="Register">
+    </form>
+</div>
+
