@@ -34,7 +34,7 @@ export interface Aggregate {
     last_heartbeat_at: number | null
 }
 
-interface HeartbeatLean {
+export interface HeartbeatLean {
     time: number
     language?: string | null
     category?: string | null

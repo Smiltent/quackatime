@@ -1,0 +1,48 @@
+<div>
+    <div>
+        <% goals.forEach(goal => { %>
+            <div>
+                <div>
+                    <p><span><%= goal.today %></span>/<% goal.target %></p>
+                    <p>All programming activity</p>
+                </div>
+                <div>
+                    <div>
+                        <p>Daily goal</p>
+                        <p><% goal.todayLeft %> left today</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <p>50%</p>
+                <div>bar</div>
+            </div>
+        <% }) %>
+    </div>
+    <div>
+        <div>
+            <p>Total Time</p>
+            <p>10h 10m</p>
+        </div>
+        <div>
+            <p>Top Project</p>
+            <p>10h 10m</p>
+        </div>
+        <div>
+            <p>Top Language</p>
+            <p>10h 10m</p>
+        </div>
+        <div>
+            <p>Top OS</p>
+            <p>10h 10m</p>
+        </div>
+        <div>
+            <p>Top Editor</p>
+            <p>10h 10m</p>
+        </div>
+        <div>
+            <p>Top Category</p>
+            <p>10h 10m</p>
+        </div>
+    </div>
+</div>

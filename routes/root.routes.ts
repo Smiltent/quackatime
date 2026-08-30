@@ -3,6 +3,7 @@ import { optionalAuth, reqAuth } from "@/middlewares/auth.middleware.ts"
 import StatsService from "@/services/stats.service.ts"
 import { Request, Response, Router } from 'express'
 import Project from "@/models/Project.ts"
+import GoalsService from "@/services/goals.service.ts";
 
 const router = Router()
 const RANGE = {
@@ -21,14 +22,21 @@ function pickRange(value: unknown) {
 }
 
 // dashboard
-router.get("/", optionalAuth, (req: Request, res: Response) => {
+router.get("/", optionalAuth, async (req: Request, res: Response) => {
     const user = req.user
 
     if (user) {
         const { range, days } = pickRange(req.query.range)
+        const [period, goals] = await Promise.all([
+            StatsService.range(user._id, days),
+            GoalsService.progress(user._id)
+        ])
         
         // if authenticated, show dashboard (/dashboard)
-        res.render("dashboard")
+        res.render("dashboard", {
+            range,
+            ranges: Object.keys(RANGE), period, goals
+        })
     } else {
         // if unauthenticated, show auth
         res.redirect("/login")

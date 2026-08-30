@@ -52,6 +52,18 @@ export function startOfDay(date: Date) {
     return d
 }
 
+export function startOfWeek(date: Date) {
+    const d = startOfDay(date)
+    d.setDate(d.getDate() - (d.getDay() + 6) % 7)
+    return d
+}
+
+export function startOfMonth(date: Date) {
+    const d = startOfDay(date)
+    d.setDate(1)
+    return d
+}
+
 export function endOfDay(date: Date) {
     const d = new Date(date)
     d.setHours(23,59,59,999)
