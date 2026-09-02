@@ -4,8 +4,8 @@ import cookieParser from "cookie-parser"
 import express from 'express'
 import path from 'path'
 
-import rootRoutes from "@/routes/root.routes"
-import authRoutes from "@/routes/auth.routes"
+import rootRoutes from "@/routes/root.routes.ts"
+import authRoutes from "@/routes/auth.routes.ts"
 
 export default class Express {
     private app: express.Express

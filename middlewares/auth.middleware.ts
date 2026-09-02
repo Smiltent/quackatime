@@ -1,6 +1,6 @@
 
 import type { NextFunction, Request, Response } from "express"
-import AuthService from "@/services/auth.service"
+import AuthService from "@/services/auth.service.ts"
 
 export async function reqAuth(req: Request, res: Response, next: NextFunction) {
     const user = await AuthService.verifySession(req.cookies?.session)

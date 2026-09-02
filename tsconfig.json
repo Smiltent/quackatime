@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     // Environment setup & latest features
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ESNext", "DOM", "deno.ns"],
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
@@ -30,7 +30,7 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
-    "types": ["bun"],
+    "types": ["deno.ns"],
     "typeRoots": ["./node_modules/@types", "./types"]
   }
 }

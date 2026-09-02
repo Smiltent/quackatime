@@ -1,6 +1,6 @@
 
+import path from "node:path"
 import chalk from "chalk"
-import path from "path"
 
 const YELLOW = chalk.bgHex("hsl(49, 77%, 49%)")
 const ORANGE = chalk.bgHex("#f05e0a")

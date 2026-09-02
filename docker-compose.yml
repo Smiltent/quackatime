@@ -1,9 +1,0 @@
-
-services:
-  quackredis:
-    
-  quackmongo:
-  quackatime:
-
-networks:
-  

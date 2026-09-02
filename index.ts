@@ -1,30 +1,27 @@
 
-import Express from "@/src/Express"
-import Database from "@/src/Mongo"
-import log from "@/util/log"
+import Express from "@/src/Express.ts"
+import Database from "@/src/Mongo.ts"
+import log from "./util/log.ts"
+import esbuild from "esbuild"
+import path from "node:path"
+import fs from "node:fs"
 
-import path from "path"
-import fs from "fs"
-
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-// args
-const envArg = process.argv.find(a => a.startsWith("--env="))
-const env = envArg ? `${envArg.split('=')[1]}`.toLowerCase() : "prod"
-
+export const type = Deno.env.get("NODE_ENV")
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // logging
-log(env === "dev")
+log(type === "dev")
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 const entries = fs.readdirSync("./private/ts")
     .filter(f => f.endsWith(".ts"))
     .map(f => path.join("./private/ts", f))
 
-await Bun.build({
-    entrypoints: entries,
+await esbuild.build({
+    entryPoints: entries,
     outdir: './public/js',
-    target: 'browser',
-    minify: env === "prod"
+    bundle: true,
+    platform: 'browser',
+    minify: type === "prod"
 })
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
