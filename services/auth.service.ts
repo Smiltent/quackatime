@@ -18,6 +18,7 @@ export default class AuthService {
 
         return User.create({
             username,
+            displayName: username,
             email,
             password: await bcrypt.hash(password, 10)
         })
