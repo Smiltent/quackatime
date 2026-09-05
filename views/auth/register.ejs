@@ -4,11 +4,19 @@
     </div>
 
     <form class="flex-col" action="/auth/register" method="POST">
-        <input type="text" name="username" maxlength="32" placeholder="username" autocomplete="off">
-        <input type="email" name="email" placeholder="your@email.com" autocomplete="off">
-        <input type="password" name="password" placeholder="password" autocomplete="new-password">
+        <input type="text" name="username" required="true" maxlength="32" placeholder="username" autocomplete="off" value="<%= locals.username || '' %>">
+        <input type="email" name="email" required="true" placeholder="your@email.com" autocomplete="off" value="<%= locals.email || '' %>">
+        <input type="password" name="password" required="true" placeholder="password" autocomplete="new-password">
         
+        <% if (locals.error) { %>
+            <p class="error"><%= locals.error %></p>
+        <% } %>
+    
         <input type="submit" value="Register">
     </form>
+
+    <p class="authFooter">
+        Have an account? <a id="link" href="/login">Login</a>.
+    </p>
 </div>
 

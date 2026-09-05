@@ -5,14 +5,18 @@
     </div>
 
     <form class="flex-col" action="/auth/login" method="POST">
-        <input type="text" name="login" placeholder="username or email" autocomplete="off">
-        <input type="password" name="password" placeholder="password">
+        <input type="text" name="login" required="true" placeholder="username or email" autocomplete="off" value="<%= locals.login || '' %>">
+        <input type="password" name="password" required="true" placeholder="password">
         
+        <% if (locals.error) { %>
+            <p class="error"><%= locals.error %></p>
+        <% } %>
+
         <input type="submit" value="Login">
     </form>
 
-    <p class="createAccount">
-        New here? <a id="createLink" href="/register">Create an account</a>.
+    <p class="authFooter">
+        New here? <a id="link" href="/register">Create an account</a>.
     </p>
 </div>
 
