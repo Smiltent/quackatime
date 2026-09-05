@@ -142,7 +142,7 @@ export default class StatsService {
 
         return {
             total_seconds: Math.round(total),
-            projects: toBuckets(counters.branches, total),
+            projects: toBuckets(counters.projects, total),
             languages: toBuckets(counters.languages, total),
             editors: toBuckets(counters.editors, total),
             oses: toBuckets(counters.oses, total),

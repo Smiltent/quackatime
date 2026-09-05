@@ -1,17 +1,17 @@
 
 // turning seconds into readable time
 // doesnt add seconds, just rounds it down
-// 1000s => 16mins
+// 1000s => 16m
 export function human(sec: number) {
     const total = Math.round(sec)
     const hrs = Math.floor(total / 3600)
     const mins = Math.floor((total % 3600) / 60)
 
-    if (!hrs && !mins) return `${total} secs`
-    if (!hrs) return `${mins} min${mins === 1 ? "" : "s"}`
-    if (!mins) return `${hrs} hr${mins === 1 ? "" : "s"}`
+    if (!hrs && !mins) return `${total}s`
+    if (!hrs) return `${mins}m`
+    if (!mins) return `${hrs}h`
 
-    return `${hrs} hr${hrs === 1 ? "" : "s"} ${mins} min${mins === 1 ? "" : "s"}`
+    return `${hrs}h ${mins}m`
 }
 
 // 1000s -> 0:16
