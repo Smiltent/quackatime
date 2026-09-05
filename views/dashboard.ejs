@@ -1,48 +1,158 @@
-<div>
-    <div>
-        <% goals.forEach(goal => { %>
-            <div>
-                <div>
-                    <p><span><%= goal.today %></span>/<% goal.target %></p>
-                    <p>All programming activity</p>
-                </div>
-                <div>
-                    <div>
-                        <p>Daily goal</p>
-                        <p><% goal.todayLeft %> left today</p>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <p>50%</p>
-                <div>bar</div>
-            </div>
-        <% }) %>
+
+<div class="dashboard">
+
+
+
+
+
+    <div class="header">
+        <div class="left">
+            <a href="/"><i class="fa-solid fa-house"></i></a>
+        </div>
+
+        <div class="fill"></div>
+
+        <div class="right">
+            <a href="/leaderboard"><i class="fa-solid fa-crown"></i></a>
+            <a href="/my/projects"><i class="fa-solid fa-book"></i></a>
+            <a href="/my/settings"><i class="fa-solid fa-gear"></i></a>
+            <form action="/auth/logout" method="POST">
+                <button type="submit"><i class="fa-solid fa-right-from-bracket"></i></button>                
+            </form>
+        </div>
     </div>
-    <div>
+
+
+
+
+
+    <div class="quickInfo">
         <div>
             <p>Total Time</p>
-            <p>10h 10m</p>
+            <p><%= period.text %></p>
         </div>
         <div>
             <p>Top Project</p>
-            <p>10h 10m</p>
+            <p><%= period.projects[0]?.name ?? "none" %></p>
         </div>
         <div>
             <p>Top Language</p>
-            <p>10h 10m</p>
+            <p><%= period.languages[0]?.name ?? "none" %></p>
         </div>
         <div>
             <p>Top OS</p>
-            <p>10h 10m</p>
+            <p><%= period.oses[0]?.name ?? "none" %></p>
         </div>
         <div>
             <p>Top Editor</p>
-            <p>10h 10m</p>
+            <p><%= period.editors[0]?.name ?? "none" %></p>
         </div>
         <div>
             <p>Top Category</p>
-            <p>10h 10m</p>
+            <p><%= period.categories[0]?.name ?? "none" %></p>
+        </div>
+    </div>
+
+
+
+
+
+
+    <% if (goals) { %>
+        <div class="goals">
+            <% goals.forEach(goal => { %>
+                <div>
+                    <div>
+                        <p><span><%= goal.today %></span>/<% goal.target %></p>
+                        <p>All programming activity</p>
+                    </div>
+                    <div>
+                        <div>
+                            <p>Daily goal</p>
+                            <p><% goal.todayLeft %> left today</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p>50%</p>
+                    <div>bar</div>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+
+
+
+
+
+
+    <div class="graphs">
+        <div class="graph-card">
+            <p>Project Durations</p>
+            <div class="chart-wrap durations">
+                <% if (!durations.length) { %>
+                    <p>No activity yet...</p>
+                <% } %>
+
+                <% durations.forEach(duration => { %>
+                    <div class="duration-row">
+                        <p class="duration-name"><%= duration.name %></p>
+                        <div class="duration-track">
+                            <div class="duration-bar" style="width: <%= duration.width %>%">
+                                <%= duration.text %>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+        <div class="graph-card">
+            <p>Languages</p>
+            <div class="chart-wrap">
+                <canvas id="languages"></canvas>
+            </div>
+        </div>
+        <div class="graph-card">
+            <p>Editors</p>
+            <div class="chart-wrap">
+                <canvas id="editors"></canvas>
+            </div>
+        </div>
+        <div class="graph-card">
+            <p>OSes</p>
+            <div class="chart-wrap">
+                <canvas id="oses"></canvas>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const charts = <%- JSON.stringify(charts) %>
+
+    function pie(id, rows) {
+        const el = document.getElementById(id)
+        if (!el) return
+
+        new Chart(el, {
+            type: "pie",
+            data: {
+                labels: rows.map(r => r.label),
+                datasets: [{ 
+                    data: rows.map(r => r.value),
+                    borderWidth: 0,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: "bottom" }}
+            }
+        })
+    }
+
+    pie("languages", charts.languages)
+    pie("editors", charts.editors)
+    pie("oses", charts.oses)
+</script>

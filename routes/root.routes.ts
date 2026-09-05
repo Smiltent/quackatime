@@ -1,9 +1,10 @@
 
 import { optionalAuth, reqAuth } from "@/middlewares/auth.middleware.ts"
 import StatsService from "@/services/stats.service.ts"
+import GoalsService from "@/services/goals.service.ts"
 import { Request, Response, Router } from 'express'
 import Project from "@/models/Project.ts"
-import GoalsService from "@/services/goals.service.ts";
+import { human } from "@/util/time.ts"
 
 const router = Router()
 const RANGE = {
@@ -31,11 +32,33 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
             StatsService.range(user._id, days),
             GoalsService.progress(user._id)
         ])
+
+        const maxSeconds = Math.max(0, ...period.projects.map(p => p.total_seconds))
         
         // if authenticated, show dashboard (/dashboard)
         res.render("dashboard", {
             range,
-            ranges: Object.keys(RANGE), period, goals
+            goals,
+            ranges: Object.keys(RANGE), 
+            period: {
+                ...period,
+                text: human(period.total_seconds)
+            }, 
+            durations: period.projects.slice(0,8).map(p => ({
+                name: p.name,
+                text: p.text,
+                width: maxSeconds > 0 ? Math.round((p.total_seconds / maxSeconds) * 100) : 0
+            })),
+            charts: {
+                days: period.days.map(d => ({
+                    label: d.date,
+                    value: d.total_seconds
+                })),
+                languages: period.languages.map(b => ({ label: b.name, value: b.total_seconds })),
+                editors: period.editors.map(b => ({ label: b.name, value: b.total_seconds })),
+                oses: period.oses.map(b => ({ label: b.name, value: b.total_seconds })),
+                projects: period.projects.map(b => ({ label: b.name, value: b.total_seconds }))
+            }
         })
     } else {
         // if unauthenticated, show auth
