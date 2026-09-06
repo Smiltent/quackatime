@@ -1,9 +1,9 @@
-<div class="flex-col auth">
+<div class="auth">
     <div>
         <img src="/public/assets/logo.png" alt="Logo">
     </div>
 
-    <form class="flex-col" action="/auth/register" method="POST">
+    <form action="/auth/register" method="POST">
         <input type="text" name="username" required="true" maxlength="32" placeholder="username" autocomplete="off" value="<%= locals.username || '' %>">
         <input type="email" name="email" required="true" placeholder="your@email.com" autocomplete="off" value="<%= locals.email || '' %>">
         <input type="password" name="password" required="true" placeholder="password" autocomplete="new-password">
