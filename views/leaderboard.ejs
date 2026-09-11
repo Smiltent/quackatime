@@ -57,11 +57,11 @@
                     <span class="lb-name"><%= row.displayName %></span>
                 </div>
                 
-                <% if (true) { %>
+                <% if (row.streak > 0) { %>
                     <div class="lb-streak">
                         <i class="fa-solid fa-fire-flame-curved"></i>
-                        <!-- <span><%= row.streak %></span> -->
-                        <span>5</span>
+                        <span><%= row.streak %></span>
+                        <!-- <span>5</span> -->
                     </div>
                 <% } %>
 
