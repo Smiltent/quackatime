@@ -1,0 +1,74 @@
+
+<div class="dashboard">
+
+    <%- include("components/$header") %>
+
+    <div class="leaderboardSettings">
+        <div class="left">
+            <a href="?period=24h" class="<%= period === '24h' ? 'active' : '' %>">
+                <i class="fa-solid fa-calendar-days"></i> last 24h
+            </a>
+
+            <div class="splitter"></div>
+            
+            <a href="?period=7d" class="<%= period === '7d' ? 'active' : '' %>">
+                <i class="fa-solid fa-calendar-week"></i> last 7d
+            </a>
+        </div>
+
+        <div class="fill"></div>
+
+        <div class="right">
+            <input type="text" name="findUser" id="findUser" placeholder="> Find User" autocomplete="off">
+        </div>
+    </div>
+
+
+
+
+
+    <div class="leaderboard">
+        <% if (!rows.length) { %>
+            <div class="lb-empty">No coding activity for this period...</div>
+        <% }%>
+        <% rows.forEach(row => { %>
+            <div
+                class="leaderboard-row
+                    <%= row.userId === me ? ' is-me' : '' %>
+                    <%= row.rank <= 3 ? ' top-' + row.rank : '' %>
+                "
+
+                data-user="<%= row.username.toLowerCase() %>"
+                data-display="<%= row.displayName.toLowerCase() %>"
+            >
+                <div class="lb-rank">
+                    <% if (row.rank === 1) { %>
+                        <i class="fa-solid fa-trophy"></i>
+                    <% } else if (row.rank === 2) { %>
+                        <i class="fa-solid fa-award"></i>
+                    <% } else if (row.rank === 3) { %>
+                        <i class="fa-solid fa-medal"></i> 
+                    <% } else { %>
+                        <span>#<%= row.rank %></span>
+                    <% } %>
+                </div>
+
+                <div class="lb-user">
+                    <span class="lb-name"><%= row.displayName %></span>
+                </div>
+                
+                <% if (true) { %>
+                    <div class="lb-streak">
+                        <i class="fa-solid fa-fire-flame-curved"></i>
+                        <!-- <span><%= row.streak %></span> -->
+                        <span>5</span>
+                    </div>
+                <% } %>
+
+                <div class="lb-time">
+                    <%= row.text %>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>

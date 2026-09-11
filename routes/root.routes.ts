@@ -1,4 +1,5 @@
 
+import LeaderboardService, { LeaderboardPeriod, LeaderboardPeriods } from "@/services/leaderboard.service.ts"
 import { optionalAuth, reqAuth } from "@/middlewares/auth.middleware.ts"
 import StatsService from "@/services/stats.service.ts"
 import GoalsService from "@/services/goals.service.ts"
@@ -118,11 +119,32 @@ router.get("/my/projects/:name", reqAuth, async (req: Request, res: Response) =>
 })
 
 // lb
-/*
-router.get("/leaderboard", reqAuth, async (req: Request, res: Response) => {
 
+function pickLbPeriod(value: unknown): LeaderboardPeriod {
+    return (
+        typeof value === "string" && (LeaderboardPeriods as readonly string[]).includes(value)
+            ? value
+            : "24h"
+    ) as LeaderboardPeriod
+}
+
+router.get("/leaderboard", reqAuth, async (req: Request, res: Response) => {
+    const period = pickLbPeriod(req.query.period)
+    const board = await LeaderboardService.get(period)
+    const me = String(req.user!._id)
+
+    res.render("leaderboard", {
+        period,
+        periods: LeaderboardPeriods,
+        rows: board.rows,
+        me,
+        myRank: board.rows.find(r => r.userId === me)?.rank ?? null,
+        builtAt: board.builtAt.toISOString(),
+        expiresAt: board.expiresAt.toISOString(),
+        cached: board.cached
+    })
 })
-*/
+
 
 // settings
 /*

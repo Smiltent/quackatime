@@ -10,6 +10,12 @@
     --primary: #89cedc;
     --secondary: #104c93;
     --accent: #50c1d7;
+
+    --repeating-fill: repeating-linear-gradient(
+        -45deg, 
+        rgba(255,255,255, 0.1) 0 1px,
+        transparent 1px 6px
+    );
 }
 
 body {
@@ -23,7 +29,6 @@ body {
 
     min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
 }
 
@@ -35,6 +40,8 @@ body {
 .auth {
     display: flex;
     flex-direction: column;
+
+    justify-content: center;
 }
 
 .auth img {
@@ -45,8 +52,7 @@ body {
 .auth input:not([type="submit"]) {
     padding: 0.85rem 1rem;
 
-    border: 1px dashed transparent;
-    border-bottom: 1px dashed rgb(255,255,255, 0.2);
+    border: 1px dashed rgb(255,255,255, 0.2);
 
     color: var(--text);
     background: var(--background);
@@ -59,6 +65,18 @@ body {
     border-color: var(--primary);
 }
 
+/* .auth input:not([type="submit"]) + input:not([type="submit"]) {
+    border-top: none;
+}
+
+.auth input:not([type="submit"]) + input:not([type="submit"]):focus {
+    border-top: 1px dashed var(--primary);
+}
+
+.auth input:not([type="submit"]):has(+ input:not([type="submit"]):focus) {
+    border-bottom: none;
+} */
+
 .auth input[type=password] {
     margin-bottom: 0.4rem;
 }
@@ -67,8 +85,7 @@ body {
     margin-top: 0.4rem;
     font-weight: 700;
 
-    border: 0;
-    border-top: 1px dashed rgb(255,255,255, 0.2);
+    border: 1px dashed rgb(255,255,255, 0.2);
     padding: 0.85rem 1rem;
 
     color: var(--text);
@@ -79,16 +96,13 @@ body {
 .auth form {
     gap: 0;
     width: 15rem;
+    padding: 1rem;
 
     display: flex;
     flex-direction: column;
 
     border: 1px dashed rgb(255,255,255, 0.2);
-    background: repeating-linear-gradient(
-        -45deg, 
-        rgba(255,255,255, 0.1) 0 1px,
-        transparent 1px 6px
-    );
+    background: var(--repeating-fill);
 }
 
 .authFooter {
@@ -121,6 +135,7 @@ body {
     flex-direction: column;
     align-items: stretch;
     width: min(100%, 60rem);
+    padding-top: 90px;
     margin-inline: auto;
     box-sizing: border-box;
     min-width: 0;
@@ -149,7 +164,6 @@ body {
     gap: 0.25rem;
     flex-shrink: 0;
     padding: 0.5rem 0.8rem;
-    background: var(--background);
 }
 
 .dashboard .header .left {
@@ -163,11 +177,7 @@ body {
 .dashboard .header .fill {
     flex: 1 1 auto;
     min-width: 1rem;
-    background: repeating-linear-gradient(
-        -45deg, 
-        rgba(255,255,255, 0.1) 0 1px,
-        transparent 1px 6px
-    );
+    background: var(--repeating-fill);
 }
 
 .dashboard .header a,
@@ -322,7 +332,148 @@ body {
 
 
 
-@media (max-width: 830px) {
+.dashboard .leaderboardSettings {
+    display: flex;
+    align-items: stretch;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-bottom: 0;
+}
+
+.dashboard .leaderboardSettings {
+    border: 1px dashed rgb(255, 255, 255, 0.2);
+    border-bottom: 0;
+    align-items: stretch;
+    width: 100%;
+    display: flex;
+}
+
+.dashboard .leaderboardSettings .right,
+.dashboard .leaderboardSettings .left {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+
+.dashboard .leaderboardSettings .left {
+    border-right: 1px dashed rgb(255, 255, 255, 0.2);
+    padding: 0.5rem 0.8rem;
+}
+
+.dashboard .leaderboardSettings .right {
+    border-left: 1px dashed rgb(255, 255, 255, 0.2);
+}
+
+.dashboard .leaderboardSettings .right input {
+    width: 12rem;
+    padding: 0.5rem 0.8rem;
+    color: var(--text);
+    background: transparent;
+    border: 0;
+}
+
+.dashboard .leaderboardSettings .fill {
+    flex: 1 1 auto;
+    min-width: 1rem;
+    background: var(--repeating-fill);
+}
+
+.dashboard .leaderboardSettings a,
+.dashboard .leaderboardSettings button {
+    padding: 0.25rem;
+    color: white;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    line-height: 1;
+    background: transparent;
+}
+
+.dashboard .leaderboardSettings a.active {
+    color: var(--primary)
+}
+
+.dashboard .leaderboardSettings .splitter {
+    width: 1px;
+    align-self: stretch;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin-inline: 0.3rem;
+}
+
+
+
+
+
+.dashboard .leaderboard {
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.dashboard .lb-empty {
+    padding: 5rem;
+    text-align: center;
+    color: rgb(255, 255, 255, 0.8)
+}
+
+.dashboard .leaderboard-row {
+    display: flex;
+    flex-direction: row;
+    padding: 0.75rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.dashboard .leaderboard-row.is-me {
+    background-color: color-mix(in srgb, var(--primary) 5%, transparent);
+}
+
+.dashboard .leaderboard-row:last-child {
+    border-bottom: 0;
+}
+
+.dashboard .lb-rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.5rem 0 0.5rem;
+}
+
+.dashboard .leaderboard-row.top-1 .lb-rank {
+    color: #e8c547;
+}
+
+.dashboard .leaderboard-row.top-2 .lb-rank {
+    color: #c0c7ce;
+}
+
+.dashboard .leaderboard-row.top-3 .lb-rank {
+    color: #c47a4a;
+}
+
+.dashboard .lb-user {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard .lb-streak {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: #ff8a4c;
+    font-size: 0.9rem;
+    padding-left: 0.7rem;
+}
+
+.dashboard .lb-time {
+    flex: 0 0 auto;
+    margin-left: auto;
+    text-align: right;
+    white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+    .dashboard {
+        padding-top: 0;
+    }
+
     .dashboard .quickInfo {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -355,5 +506,9 @@ body {
 
     .dashboard .graphs .graph-card:last-child {
         border-bottom: 0;
+    }
+
+    .dashboard .leaderboardSettings .right input {
+        width: 7.5rem;
     }
 }
