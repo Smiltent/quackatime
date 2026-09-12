@@ -3,17 +3,22 @@
 
 # About
 An alternative to WakaTime, which you can self-host!  
-Hugely insprired by WakaTime and [Hackatime](https://github.com/hackclub/hackatime) (helped me figure out the API endpoints).
+Hugely insprired by WakaTime and [Hackatime](https://github.com/hackclub/hackatime) (helped me figure out the API endpoints).  
 
 # Features
-* [ ] Friends
+* [x] Tracking Time
+* [x] Leaderboards (Daily, Weekly)
+* [x] Project viewing
+
+# Planned Features
+This is just a small list that I want to implement into this. Some being useless, some making it motivating for coding.
+* [ ] Friends system
 * [ ] Poking (Shows a visual in Status bar)
 * [ ] Integration with GitHub
 * [ ] Groups (Invite users or go solo and track multiple projects into one)
 * [ ] Badges
-* [ ] Leaderboards (Daily, Weekly, Friends, Total)
-* [ ] Achivements (Unsure for v1)
-* [ ] Virtual Duck Shop (Unsure for v1)
+* [ ] Achivements
+* [ ] Virtual Duck Shop
 * [ ] Weekly notifications via E-mail or Discord
 
 # Setup
@@ -23,6 +28,10 @@ Install the [Deno](https://deno.com/) runtime. Then, run:
 deno run prod
 ```
 The server will be active on `http://localhost:3000`!
+
+# AI Usage
+Any commits begining with `(AI)` or `[AI]` means that majority of the code was made with AI.  
+Was used to help with Heartbeat and Statistics management & some tab completes.
 
 # License
 [LICENSE](LICENSE)
