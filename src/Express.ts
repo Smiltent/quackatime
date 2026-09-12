@@ -6,6 +6,8 @@ import git from "@/util/githash.ts"
 import express from 'express'
 import path from 'node:path'
 
+import settingsRoutes from "@/routes/api/settings.routes.ts"
+import timeRoutes from "@/routes/api/time.routes.ts"
 import rootRoutes from "@/routes/root.routes.ts"
 import authRoutes from "@/routes/auth.routes.ts"
 
@@ -43,13 +45,16 @@ export default class Express {
         this.app.use("/", rootRoutes)
         this.app.use("/auth", authRoutes)
 
+        this.app.use('/api', timeRoutes)
+        this.app.use("/api", settingsRoutes)
+
         this.app.use((req, res) => {
             res.status(404).send("404")
         })
     }
 
     private public() {
-        const isDev = process.env.NODE_DEV === "dev"
+        const isDev = process.env.NODE_ENV === "dev"
 
         this.app.use(
             '/public',
