@@ -34,11 +34,17 @@ export interface Aggregate {
     last_heartbeat_at: number | null
 }
 
+export interface ProjectBreakdown {
+    total_seconds: number
+    text: string
+    languages: Bucket[]
+}
+
 export interface HeartbeatLean {
     time: number
     language?: string | null
     category?: string | null
-    project?: { _id: Types.ObjectId, name: string } | null
+    project?: { _id: Types.ObjectId, name: string, archived?: boolean } | null
     branch?: string | null
     ide?: string | null
     os?: string | null
@@ -91,10 +97,15 @@ export default class StatsService {
             time: { $gte: from.getTime() / 1000, $lte: to.getTime() / 1000 }
         })
         .sort({ time: 1 })
-        .populate("project", "name")
+        .populate("project", "name archived")
         .lean<HeartbeatLean[]>()
+
+        const visible = heartbeats.filter(h => {
+            if (!h.project?.archived) return true
+            return Boolean(filters?.project && h.project.name === filters.project)
+        })
         
-        if (!filters || !Object.values(filters).some(Boolean)) return heartbeats
+        if (!filters || !Object.values(filters).some(Boolean)) return visible
         return heartbeats.filter(h => this.matchFilters(h, filters))
     }
 
@@ -163,6 +174,38 @@ export default class StatsService {
             heartbeats: heartbeats.length,
             last_heartbeat_at: heartbeats.at(-1)?.time ?? null
         }
+    }
+
+    public static async byProjects(userId: Types.ObjectId, from: Date, to: Date) {
+        const heartbeats = await this.fetch(userId, from, to)
+        const sliced = this.durations(heartbeats)
+        const map = new Map<string, { total: number, languages: Counter}>()
+
+        for (const { heartbeat, seconds } of sliced) {
+            const name = heartbeat.project?.name 
+            if (!name) continue
+
+            let entry = map.get(name)
+            if (!entry) {
+                entry = { total: 0, languages: new Map() }
+                map.set(name, entry)
+            }
+            entry.total += seconds
+            bump(entry.languages, heartbeat.language, seconds)
+        }
+
+        const out = new Map<string, ProjectBreakdown>()
+        for (const [ name, { total, languages }] of map) {
+            const total_seconds = Math.round(total)
+
+            out.set(name, {
+                total_seconds,
+                text: human(total_seconds),
+                languages: toBuckets(languages, total_seconds)
+            })
+        }
+
+        return out
     }
 
     public static today(userId: Types.ObjectId, filters?: StatsFilters) {

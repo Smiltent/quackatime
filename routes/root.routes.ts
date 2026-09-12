@@ -272,31 +272,76 @@ router.get("/register", optionalAuth, (req: Request, res: Response) => {
 // projects
 router.get("/my/projects", reqAuth, async (req: Request, res: Response) => {
     const user = req.user!
-    const { range, days } = pickRange(req.query)
+    const showArch = req.query.show === "archived"
 
-    const [projects, period] = await Promise.all([
-        Project.find({ user: user._id }).sort({ name: 1 }).lean(),
-        StatsService.range(user._id, days)
+    let resolved = pickRange(req.query)
+    if (resolved.range === "alltime") {
+        const first = await StatsService.firstHeartbeatAt(user._id)
+        resolved = {
+            ...resolved,
+            from: first ? startOfDay(first) : startOfDay(new Date()),
+            fromKey: dateKey(first ? startOfDay(first) : startOfDay(new Date())),
+            toKey: dateKey(resolved.to),
+            label: "All time"
+        }
+    }
+
+    const [projects, breakdown] = await Promise.all([
+        Project.find({ user: user._id, archived: showArch }).sort({ name: 1 }).lean(),
+        showArch
+            ? Promise.resolve(new Map())
+            : StatsService.byProjects(user._id, resolved.from, resolved.to)
     ])
 
-    const totals = new Map(period.projects.map(p => [p.name, p]))
+    let rows
+    if (showArch) {
+        rows = await Promise.all(projects.map(async p => {
+            const stats = await StatsService.aggregate(
+                user._id,
+                resolved.from,
+                resolved.to,
+                { project: p.name }
+            )
+
+            return {
+                name: p.name,
+                archived: true,
+                total_seconds: stats.total_seconds,
+                text: human(stats.total_seconds),
+                languages: stats.languages.slice(0, 3).map(l => l.name)
+            }
+        }))
+    } else {
+        rows = projects.map(p => {
+            const stats = breakdown.get(p.name)
+            return {
+                name: p.name,
+                archived: false,
+                total_seconds: stats?.total_seconds ?? 0,
+                text: stats?.text ?? "0 secs",
+                languages: (stats?.languages ?? []).slice(0, 3).map(l => l.name)
+            }
+        })
+    }
+
+    rows.sort((a, b) => b.total_seconds - a.total_seconds)
 
     res.render("projects/index", {
-        range,
-        ranges: Object.keys(RANGE),
-        rows: projects
-            .map(p => ({
-                name: p.name,
-                repo: p.repo ?? null,
-                total_seconds: totals.get(p.name)?.total_seconds ?? 0,
-                text: totals.get(p.name)?.text ?? "0 secs"
-            }))
-            .sort((a, b) => b.total_seconds - a.total_seconds)
+        showArch,
+        filters: {
+            range: resolved.range,
+            from: resolved.fromKey,
+            to: resolved.toKey,
+            label: resolved.label,
+            presets: resolved.presets,
+            labels: resolved.labels
+        },
+        rows
     })
 })
 
 router.get("/my/projects/:name", reqAuth, async (req: Request, res: Response) => {
-    
+    res.render("projects/view")
 })
 
 // lb
