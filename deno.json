@@ -1,7 +1,11 @@
 {
   "tasks": {
     "dev": "deno run --watch --env-file --allow-net --allow-read --allow-env --allow-sys --allow-ffi index.ts",
-    "prod": "deno run --env-file --allow-net --allow-read --allow-env --allow-sys --allow-ffi index.ts"
+    "prod": "deno run --env-file --allow-net --allow-read --allow-env --allow-sys --allow-ffi index.ts",
+
+    "generate-goal": "deno run --env-file --allow-net --allow-env --allow-read --allow-sys scripts/give-goal.ts",
+    "generate-hbs": "deno run --env-file --allow-net --allow-env --allow-read --allow-sys scripts/give-heartbeats.ts",
+    "generate-coding": "deno run --env-file --allow-net --allow-env --allow-read --allow-sys scripts/give-coding.ts"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.19",
