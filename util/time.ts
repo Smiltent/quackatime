@@ -64,6 +64,12 @@ export function startOfMonth(date: Date) {
     return d
 }
 
+export function startOfYear(date: Date) {
+    const d = startOfDay(date)
+    d.setMonth(0, 1)
+    return d
+}
+
 export function endOfDay(date: Date) {
     const d = new Date(date)
     d.setHours(23,59,59,999)

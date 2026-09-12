@@ -3,6 +3,103 @@
 
     <%- include("components/$header") %>
 
+    <div class="filters" id="filters" data-query="<%= JSON.stringify(queryBase) %>">
+        <!-- <input type="text" placeholder="Date Range ...">
+        <input type="text" placeholder="Project ...">
+        <input type="text" placeholder="Language ...">
+        <input type="text" placeholder="OS ...">
+        <input type="text" placeholder="Editor ...">
+        <input type="text" placeholder="Category ..."> -->
+        <div class="filter" data-key="range">
+            <button class="filter-trigger" aria-expanded="false">
+                <span class="filter-label">Date Range</span>
+                <span class="filter-value"><%= filters.label %></span>
+            </button> 
+            <div class="filter-menu" hidden>
+                <% filters.presets.forEach(p => { %>
+                    <button class="filter-option <%= filters.range === p ? 'is-active' : '' %>" data-range="<%= p %><%= filters.labels[p] %>"></button>
+                <% }) %>
+                <div class="filter-custom <%= filters.range === 'custom' ? 'is-open' : '' %>">
+                    <p>Custom</p>
+                    <label>
+                        From <input type="date" class="filter-from" name="" id="">
+                    </label>
+                    <label>
+                        To <input type="date" class="filter-to" name="" id="">
+                    </label>
+                    <button class="filter-apply-custom">Apply</button>
+                </div>
+            </div>
+        </div>
+
+        <%
+            const facetFilters = [
+                { key: 'project', label: 'Project', options: filterOptions.projects, value: filters.project },
+                { key: 'language', label: 'Language', options: filterOptions.languages, value: filters.language },
+                { key: 'os', label: 'OS', options: filterOptions.oses, value: filters.os },
+                { key: 'editor', label: 'Editor', options: filterOptions.editors, value: filters.editor },
+                { key: 'category', label: 'Category', options: filterOptions.categories, value: filters.category },
+            ]
+        %>
+
+        <% facetFilters.forEach(f => { %>
+            <div class="filter" data-key="<%= f.key %>">
+                <button class="filter-trigger" aria-expanded="false">
+                    <span class="filter-label"><%= f.label %></span>
+                    <span class="filter-value"><%= f.value || "All" %></span>
+                </button>
+                <div class="filter-menu" hidden>
+                    <button class="filter-option <%= !f.value ? 'is-active' : '' %>" data-value="">All</button>
+
+                    <% f.options.forEach(opt => { %>
+                        <button class="filter-option <%= f.value === opt ? 'is-active' : '' %>" data-value="<%= opt %>"><%= opt %></button>
+                    <% }) %>
+                </div>
+            </div>
+        <% }) %>
+
+    </div>
+
+
+
+
+
+    <% if (goals) { %>
+        <div class="goals" style="--goal-cols: <%= Math.min(goals.length, 3) %>">
+            <% goals.forEach(goal => { %>
+                <div class="goal <%= goal.done ? 'is-done' : '' %>">
+                    <div class="goal-main">
+                        <div class="goal-stats">
+                            <p>
+                                <span><%= goal.progressText %></span>/<%= goal.targetText %>
+                            </p>
+                            <p class="goal-scope"><%= goal.scope %></p>
+                        </div>
+                        <div class="goal-meta">
+                            <p class="goal-period"><%= goal.periodLabel %></p>
+                            <p class="goal-left">
+                                <% if (goal.done) { %>
+                                    Done
+                                <% } else { %>
+                                    <%= goal.leftText %> left
+                                <% } %>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="goal-track">
+                            <div class="goal-bar" style="width: <%= goal.percent %>%"></div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+
+
+
+
+
     <div class="quickInfo">
         <div>
             <p>Total Time</p>
@@ -29,34 +126,6 @@
             <p><%= period.categories[0]?.name ?? "none" %></p>
         </div>
     </div>
-
-
-
-
-
-
-    <% if (goals) { %>
-        <div class="goals">
-            <% goals.forEach(goal => { %>
-                <div>
-                    <div>
-                        <p><span><%= goal.today %></span>/<% goal.target %></p>
-                        <p>All programming activity</p>
-                    </div>
-                    <div>
-                        <div>
-                            <p>Daily goal</p>
-                            <p><% goal.todayLeft %> left today</p>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <p>50%</p>
-                    <div>bar</div>
-                </div>
-            <% }) %>
-        </div>
-    <% } %>
 
 
 
@@ -104,6 +173,10 @@
     </div>
 </div>
 
+
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const charts = <%- JSON.stringify(charts) %>
@@ -132,4 +205,101 @@
     pie("languages", charts.languages)
     pie("editors", charts.editors)
     pie("oses", charts.oses)
+</script>
+
+
+
+
+<script>
+    (function () {
+        const root = document.getElementById("filters")
+        if (!root) return
+
+        const base = JSON.parse(root.dataset.query || "{}")
+        function go(patch) {
+            const next = { ...base, ...patch }
+            const sp = new URLSearchParams()
+
+            for (const [k, v] of Object.entries(next)) {
+                if (v != null && v !== "") {
+                    sp.set(k, String(v))
+                }
+
+                if (next.range !== "custom") {
+                    sp.delete("from")
+                    sp.delete("to")
+                }
+
+                location.href = "/?" + sp.toString()
+            }
+        }
+
+        function closeAll(except) {
+            root.querySelectorAll(".filter").forEach(f => {
+                if (f === except) return
+                f.classList.remove("is-open")
+
+                const menu = f.querySelector(".filter-menu")
+                const btn = f.querySelector(".filter-trigger")
+
+                if (menu) {
+                    menu.hidden = true
+                }
+                if (btn) {
+                    btn.setAttribute("aria-expanded", "false")
+                }
+            })
+        }
+
+        root.querySelectorAll(".filter").forEach(filter => {
+            const key = filter.dataset.key
+            const trigger = filter.querySelector(".filter-trigger")
+            const menu = filter.querySelector(".filter-menu")
+            if (!trigger || !menu) return
+
+            trigger.addEventListener("click", (e) => {
+                e.stopPropagation()
+                const open = filter.classList.contains("is-open")
+
+                closeAll()
+                if (!open) {
+                    filter.classList.add("is-open")
+                    menu.hidden = false
+                    trigger.setAttribute("aria-expanded", "true")
+                }
+            })
+
+            menu.addEventListener("click", (e) => e.stopPropagation())
+
+            if (key === "range") {
+                menu.querySelectorAll("[data-range]").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        go({ range: btn.getAttribute("data-range"), from: undefined, to: undefined })
+                    })
+                })
+
+                const apply = menu.querySelector(".filter-apply-custom")
+                apply?.addEventListener("click", () => {
+                    const from = menu.querySelector(".filter-from")?.value
+                    const top = menu.querySelector(".filter-to")?.value
+                    if (!from || !to) return
+
+                    go({ range: "custom", from, to })
+                })
+            } else {
+                menu.querySelectorAll(".filter-option").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        go({ [key]: btn.getAttribute("data-value") || undefined })
+                    })
+                })
+            }
+        })
+
+        document.addEventListener("click", () => closeAll())
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeAll()
+            }
+        })
+    })()
 </script>

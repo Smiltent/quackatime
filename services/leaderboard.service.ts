@@ -71,8 +71,13 @@ export default class LeaderboardService {
             to
         }
 
-        return {
+        if (period === "7d") return {
             from: new Date(now.getTime() - 7 * DAY_IN_MS),
+            to
+        }
+
+        return {
+            from: null as unknown as Date,
             to
         }
     }

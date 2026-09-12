@@ -16,6 +16,18 @@ interface ProjectLean {
     name: string
 }
 
+export function formatGoalMinutes(minutes: number) {
+    const total = Math.max(0, Math.round(minutes))
+    const h = Math.floor(total / 60)
+    const m = total % 60
+
+    if (!h && !m) return "0m"
+    if (!h) return `${m}m`
+    if (!m) return `${h}h`
+
+    return `${h}h ${m}m`
+}
+
 export default class GoalsService {
     private static windowStart(period: string, now: Date) {
         if (period === "day") return startOfDay(now)
@@ -49,7 +61,7 @@ export default class GoalsService {
         const sliced = StatsService.durations(heartbeats)
 
         return goals.map(goal => {
-            const start = this.windowStart(goal.period, now).getTime()
+            const start = this.windowStart(goal.period, now).getTime() / 1000
             const languages = new Set(goal.languages)
             const projectIds = new Set(goal.projects.map(p => String(p._id)))
 
@@ -57,17 +69,17 @@ export default class GoalsService {
             for (const { heartbeat, seconds: sec } of sliced) {
                 if (heartbeat.time < start) continue
                 if (languages.size && !languages.has(heartbeat.language ?? "")) continue
-                if (projectIds.size && !projectIds.has(String(heartbeat.project?._id)))
+                if (projectIds.size && !projectIds.has(String(heartbeat.project?._id))) continue
 
                 seconds += sec
             }
             seconds = Math.round(seconds)
 
-            const target = goal.amount * (goal.unit === "hours" ? 3600 : 60)
+            const target = goal.amount * 60
             const scope = [
                 goal.languages.join(', '),
                 goal.projects.map(p => p.name).join(", ")
-            ].filter(Boolean).join(" - ") || "ALL PROGRAMMING ACTIVITY"
+            ].filter(Boolean).join(" - ") || "All programming activity"
 
             return {
                 id: String(goal._id),
@@ -76,7 +88,7 @@ export default class GoalsService {
                 scope,
                 seconds,
                 progressText: human(seconds),
-                targetText: `${goal.amount} ${goal.unit === "hours" ? "hrs" : "mins"}`,
+                targetText: formatGoalMinutes(goal.amount),
                 percent: Math.min(100, Math.round((seconds / target) * 100)),
                 leftText: human(Math.max(0, target - seconds)),
                 done: seconds >= target

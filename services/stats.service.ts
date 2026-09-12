@@ -46,6 +46,14 @@ export interface HeartbeatLean {
     entity: string
 }
 
+export interface StatsFilters {
+    project?: string
+    language?: string
+    os?: string
+    editor?: string
+    category?: string
+}
+
 type Counter = Map<string, number>
 
 // adds `+sec` to the total of `key` in Counter
@@ -77,7 +85,7 @@ function toBuckets(counter: Counter, total: number) {
 }
 
 export default class StatsService {
-    private static async fetch(userId: Types.ObjectId, from: Date, to: Date, project?: string) {
+    private static async fetch(userId: Types.ObjectId, from: Date, to: Date, filters?: StatsFilters) {
         const heartbeats = await Heartbeat.find({
             user: userId,
             time: { $gte: from.getTime() / 1000, $lte: to.getTime() / 1000 }
@@ -86,8 +94,8 @@ export default class StatsService {
         .populate("project", "name")
         .lean<HeartbeatLean[]>()
         
-        if (!project) return heartbeats
-        return heartbeats.filter(h => h.project?.name === project)
+        if (!filters || !Object.values(filters).some(Boolean)) return heartbeats
+        return heartbeats.filter(h => this.matchFilters(h, filters))
     }
 
     // turns a stream of heartbeats into durations
@@ -107,9 +115,9 @@ export default class StatsService {
         userId: Types.ObjectId,
         from: Date,
         to: Date,
-        project?: string
+        filters?: StatsFilters
     ) {
-        const heartbeats = await this.fetch(userId, from, to, project)
+        const heartbeats = await this.fetch(userId, from, to, filters)
         const sliced = this.durations(heartbeats)
 
         const counters = {
@@ -157,23 +165,23 @@ export default class StatsService {
         }
     }
 
-    public static today(userId: Types.ObjectId, project?: string) {
+    public static today(userId: Types.ObjectId, filters?: StatsFilters) {
         const now = new Date()
-        return this.aggregate(userId, startOfDay(now), endOfDay(now), project)
+        return this.aggregate(userId, startOfDay(now), endOfDay(now), filters)
     }
 
-    public static range(userId: Types.ObjectId, days: number, project?: string) {
+    public static range(userId: Types.ObjectId, days: number, filters?: StatsFilters) {
         const now = new Date()
         const from = startOfDay(new Date(now.getTime() - (days - 1) * 86400000))
 
-        return this.aggregate(userId, from, endOfDay(now), project)
+        return this.aggregate(userId, from, endOfDay(now), filters)
     }
 
-    public static async allTime(userId: Types.ObjectId, project?: string) {
+    public static async allTime(userId: Types.ObjectId, filters?: StatsFilters) {
         const first = await Heartbeat.findOne({ user: userId }).sort({ time: 1}).lean()
         const from = first ? new Date(first.time * 1000) : new Date()
 
-        return this.aggregate(userId, startOfDay(from), endOfDay(new Date()), project)
+        return this.aggregate(userId, startOfDay(from), endOfDay(new Date()), filters)
     }
 
     public static async firstHeartbeatAt(userId: Types.ObjectId) {
@@ -182,5 +190,17 @@ export default class StatsService {
             .lean()
 
         return first ? new Date(first.time * 1000) : null
+    }
+
+    private static matchFilters(h: HeartbeatLean, filters?: StatsFilters) {
+        if (!filters) return true
+
+        if (filters.project && h.project?.name !== filters.project) return false
+        if (filters.language && h.language !== filters.language) return false
+        if (filters.os && h.os !== filters.os) return false
+        if (filters.editor && h.ide !== filters.editor) return false
+        if (filters.category && h.category !== filters.category) return false
+
+        return true
     }
 }
