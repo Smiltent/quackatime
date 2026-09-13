@@ -18,7 +18,7 @@ This is just a small list that I want to implement into this. Some being useless
 * [ ] Groups (Invite users or go solo and track multiple projects into one)
 * [ ] Badges
 * [ ] Achivements
-* [ ] Virtual Duck Shop
+* [ ] Quackagotchi (a tomagatchi that gets fed with hours)
 * [ ] Weekly notifications via E-mail or Discord
 
 # Setup
