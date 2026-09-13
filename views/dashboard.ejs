@@ -16,15 +16,21 @@
                         data-range="<%= p %>"
                     ><%= filters.labels[p] %></button>
                 <% }) %>
+                <button
+                    type="button"
+                    class="filter-option filter-custom-toggle <%= filters.range === 'custom' ? 'is-active' : '' %>"
+                    aria-expanded="<%= filters.range === 'custom' ? 'true' : 'false' %>"
+                >Custom</button>
                 <div class="filter-custom <%= filters.range === 'custom' ? 'is-open' : '' %>">
-                    <p>Custom</p>
                     <label>
-                        From <input type="date" class="filter-from" value="<%= filters.range === 'custom' ? filters.from : '' %>">
+                        <span>From</span>
+                        <input type="date" class="filter-from" value="<%= filters.range === 'custom' ? filters.from : '' %>">
                     </label>
                     <label>
-                        To <input type="date" class="filter-to" value="<%= filters.range === 'custom' ? filters.to : '' %>">
+                        <span>To</span>
+                        <input type="date" class="filter-to" value="<%= filters.range === 'custom' ? filters.to : '' %>">
                     </label>
-                    <button class="filter-apply-custom">Apply</button>
+                    <button type="button" class="filter-apply-custom">Apply</button>
                 </div>
             </div>
         </div>
@@ -271,10 +277,31 @@
                     })
                 })
 
+                const customPanel = menu.querySelector(".filter-custom")
+                const customToggle = menu.querySelector(".filter-custom-toggle")
+                const fromInput = menu.querySelector(".filter-from")
+                const toInput = menu.querySelector(".filter-to")
                 const apply = menu.querySelector(".filter-apply-custom")
+
+                function syncApply() {
+                    if (!apply) return
+                    apply.disabled = !(fromInput?.value && toInput?.value)
+                }
+
+                customToggle?.addEventListener("click", () => {
+                    const open = customPanel?.classList.toggle("is-open")
+                    customToggle.classList.toggle("is-active", !!open)
+                    customToggle.setAttribute("aria-expanded", open ? "true" : "false")
+                    if (open) fromInput?.focus()
+                })
+
+                fromInput?.addEventListener("input", syncApply)
+                toInput?.addEventListener("input", syncApply)
+                syncApply()
+
                 apply?.addEventListener("click", () => {
-                    const from = menu.querySelector(".filter-from")?.value
-                    const to = menu.querySelector(".filter-to")?.value
+                    const from = fromInput?.value
+                    const to = toInput?.value
                     if (!from || !to) return
 
                     go({ range: "custom", from, to })
