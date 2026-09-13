@@ -31,7 +31,7 @@ The server will be active on `http://localhost:3000`!
 
 # AI Usage
 Any commits begining with `(AI)` or `[AI]` means that majority of the code was made with AI.  
-Was used to help with Heartbeat and Statistics management & some tab completes.
+AI was used to help with Heartbeat and Statistics service management & tab completes. 
 
 # License
 [LICENSE](LICENSE)
