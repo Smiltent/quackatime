@@ -4,12 +4,6 @@
     <%- include("components/$header") %>
 
     <div class="filters" id="filters" data-query="<%= JSON.stringify(queryBase) %>">
-        <!-- <input type="text" placeholder="Date Range ...">
-        <input type="text" placeholder="Project ...">
-        <input type="text" placeholder="Language ...">
-        <input type="text" placeholder="OS ...">
-        <input type="text" placeholder="Editor ...">
-        <input type="text" placeholder="Category ..."> -->
         <div class="filter" data-key="range">
             <button class="filter-trigger" aria-expanded="false">
                 <span class="filter-label">Date Range</span>
@@ -17,15 +11,18 @@
             </button> 
             <div class="filter-menu" hidden>
                 <% filters.presets.forEach(p => { %>
-                    <button class="filter-option <%= filters.range === p ? 'is-active' : '' %>" data-range="<%= p %><%= filters.labels[p] %>"></button>
+                    <button 
+                        class="filter-option <%= filters.range === p ? 'is-active' : '' %>" 
+                        data-range="<%= p %>"
+                    ><%= filters.labels[p] %></button>
                 <% }) %>
                 <div class="filter-custom <%= filters.range === 'custom' ? 'is-open' : '' %>">
                     <p>Custom</p>
                     <label>
-                        From <input type="date" class="filter-from" name="" id="">
+                        From <input type="date" class="filter-from" value="<%= filters.range === 'custom' ? filters.from : '' %>">
                     </label>
                     <label>
-                        To <input type="date" class="filter-to" name="" id="">
+                        To <input type="date" class="filter-to" value="<%= filters.range === 'custom' ? filters.to : '' %>">
                     </label>
                     <button class="filter-apply-custom">Apply</button>
                 </div>
@@ -136,10 +133,6 @@
         <div class="graph-card">
             <p>Project Durations</p>
             <div class="chart-wrap durations">
-                <% if (!durations.length) { %>
-                    <p>No activity yet...</p>
-                <% } %>
-
                 <% durations.forEach(duration => { %>
                     <div class="duration-row">
                         <p class="duration-name"><%= duration.name %></p>
@@ -281,7 +274,7 @@
                 const apply = menu.querySelector(".filter-apply-custom")
                 apply?.addEventListener("click", () => {
                     const from = menu.querySelector(".filter-from")?.value
-                    const top = menu.querySelector(".filter-to")?.value
+                    const to = menu.querySelector(".filter-to")?.value
                     if (!from || !to) return
 
                     go({ range: "custom", from, to })

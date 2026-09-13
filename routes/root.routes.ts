@@ -287,7 +287,7 @@ router.get("/my/projects", reqAuth, async (req: Request, res: Response) => {
     }
 
     const [projects, breakdown] = await Promise.all([
-        Project.find({ user: user._id, archived: showArch }).sort({ name: 1 }).lean(),
+        Project.find({ user: user._id, archived: showArch ? true : { $ne: true } }).sort({ name: 1 }).lean(),
         showArch
             ? Promise.resolve(new Map())
             : StatsService.byProjects(user._id, resolved.from, resolved.to)

@@ -7,6 +7,7 @@ import express from 'express'
 import path from 'node:path'
 
 import settingsRoutes from "@/routes/api/settings.routes.ts"
+import projectsRoutes from "@/routes/api/projects.routes.ts"
 import timeRoutes from "@/routes/api/time.routes.ts"
 import rootRoutes from "@/routes/root.routes.ts"
 import authRoutes from "@/routes/auth.routes.ts"
@@ -47,6 +48,7 @@ export default class Express {
 
         this.app.use('/api', timeRoutes)
         this.app.use("/api", settingsRoutes)
+        this.app.use("/api", projectsRoutes)
 
         this.app.use((req, res) => {
             res.status(404).send("404")

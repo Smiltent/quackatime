@@ -106,7 +106,7 @@ export default class StatsService {
         })
         
         if (!filters || !Object.values(filters).some(Boolean)) return visible
-        return heartbeats.filter(h => this.matchFilters(h, filters))
+        return visible.filter(h => this.matchFilters(h, filters))
     }
 
     // turns a stream of heartbeats into durations

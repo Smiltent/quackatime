@@ -1,0 +1,59 @@
+
+<div class="dashboard">
+
+    <%- include("../components/$header") %>
+
+    <div class="settings">
+        <div class="left">
+            <a href="/my/projects" class="<%= !showArch ? 'active' : '' %>">
+                <i class="fa-solid fa-folder"></i> Active
+            </a>
+            <div class="splitter"></div>
+            <a href="/my/projects?show=archived" class="<%= showArch ? 'active' : '' %>">
+                <i class="fa-solid fa-box-archive"></i> Archived
+            </a>
+        </div>
+
+        <div class="fill"></div>
+    </div>
+
+
+
+
+    <div class="projects">
+        <% if (!rows.length) { %>
+            <div class="projects-empty">
+                <%= showArch ? "No archived projects..." : "No projects yet. But you can change that!" %>
+            </div>
+        <% } %>
+
+        <% rows.forEach(row => { %>
+            <div class="project-card <%= row.archived ? 'is-archived' : '' %>">
+                <div class="project-card-top">
+                    <div class="project-name" title="<%= row.name %>"><%= row.name %></div>
+                    <% if (row.archived) { %>
+                        <form action="/api/v1/projects/<%= encodeURIComponent(row.name) %>/unarchive" method="POST">
+                            <button type="submit" title="Unarchive" aria-label="Unarchive <%= row.name %>">
+                                <i class="fa-solid fa-box-open"></i>
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <form action="/api/v1/projects/<%= encodeURIComponent(row.name) %>/archive" method="POST">
+                            <button type="submit" title="Archive (hide from statistics)" aria-label="Archive <%= row.name %>">
+                                <i class="fa-solid fa-box-archive"></i>
+                            </button>
+                        </form>
+                    <% } %>
+                </div>
+                <p class="project-time"><%= row.text %></p>
+                <div class="project-languages">
+                    <% if (row.languages.length) { %>
+                        <% row.languages.forEach(lang => { %>
+                            <span class="project-lang"><%= lang %></span>
+                        <% }) %>
+                    <% } %>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
