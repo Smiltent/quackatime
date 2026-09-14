@@ -16,11 +16,11 @@
                 </label>
                 <label>
                     <span>Display Name</span>
-                    <input type="text" name="displayName" maxlength="64" required value="<%= profile.username %>" autocomplete="nickname">
+                    <input type="text" name="displayName" maxlength="64" required value="<%= profile.displayName %>" autocomplete="nickname">
                 </label>
                 <label>
                     <span>Email</span>
-                    <input type="email" name="email" required value="<%= profile.username %>" autocomplete="email">
+                    <input type="email" name="email" required value="<%= profile.email %>" autocomplete="email">
                 </label>
                 
                 <button type="submit">Save profile</button>
@@ -33,15 +33,17 @@
             <% if (goals.length) { %>
                 <div class="settings-goals">
                     <% goals.forEach(goal => { %>
-                        <div>
-                            <p class="settings-goal-title"><%= goal.periodLabel %> . <%= goal.targetText %></p>
-                            <p class="settings-muted"><%= goal.progressText %> / <%= goal.targetText %> . <%= goal.scope %></p>
+                        <div class="settings-goal">
+                            <div>
+                                <p class="settings-goal-title"><%= goal.periodLabel %> || <%= goal.targetText %></p>
+                                <p class="settings-muted"><%= goal.progressText %> / <%= goal.targetText %> || <%= goal.scope %></p>
+                            </div>
+                            <form action="/api/v1/settings/goals/<%= goal.id %>/delete" method="POST">
+                                <button type="submit" title="Delete goal" aria-label="Delete goal">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
                         </div>
-                        <form action="/api/v1/settings/goals/<%= goal.id %>/delete" method="POST">
-                            <button type="submit" title="Delete goal" aria-label="Delete goal">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </form>
                     <% }) %>
                 </div>
             <% } else { %>
@@ -67,6 +69,22 @@
             <% } else { %>
                 <p class="settings-muted">Maximum of <%= goalsMax %> goals reached</p>
             <% } %>
+        </section>
+        <section class="settings-sec is-danger">
+            <h2>Delete account</h2>
+            <p class="settings-muted">Permenantly deletes your heartbeats, projects, goals and API keys</p>
+            <form class="settings-form" action="/api/v1/settings/delete" method="POST">
+                <label>
+                    <span>Password</span>
+                    <input type="password" name="password" required autocomplete="current-password">
+                </label>
+
+                <label>
+                    <span>Type DELETE to confirm</span>
+                    <input type="text" name="confirm" required autocomplete="off" placeholder="DELETE">
+                </label>
+                <button type="submit" class="is-danger">Delete my account</button>
+            </form>
         </section>
     </div>
 </div>

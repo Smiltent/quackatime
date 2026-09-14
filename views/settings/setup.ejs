@@ -9,38 +9,44 @@
     <div class="settings-real">
         <section class="settings-sec">
             <h2>Tracking setup</h2>
-            <p class="settings-muted">
-                Install any WakaTime-compatible plugin, then point it at this server and paste your API key.
-            </p>
+            <ol class="settings-steps">
+                <li>Install any WakaTime plugin for your editor</li>
+                <li>Paste the configuration in your WakaTime config file, usually located here: <code>~/.wakatime.cfg</code></li>
+                <li>Code as usual. Now, heartbeats will show up on the dashboard</li>
+            </ol>
             <div class="settings-kv">
-                <div>
-
-                </div>
-                <div>
-                    <% if (revealedKey) { %>
-                        <code id="apiKey">
+                <% if (revealedKey) { %>
+                    <h2>Config</h2>
+                    <code id="apiKey">
 # put this in your ~/.wakatime.cfg file
 
 [settings]
 api_url = https://<%= url %>/api/v1
 api_key = <%= revealedKey %>
 heartbeat_rate_limit_seconds = 30                       
-                        </code>
-                    <% } else if (hasApiKey) { %>
-                        <code id="is-masked">
+                    </code>
+                <% } else if (hasApiKey) { %>
+                    <h2>Config</h2>
+                    <code id="is-masked">
 # put this in your ~/.wakatime.cfg file
 
 [settings]
 api_url = <%= apiBase %>/api/v1
 api_key = ************************************
 heartbeat_rate_limit_seconds = 30   
-                        </code>
-                        <p class="settings-muted">Key is hidden. Regenerate to reveal a new one</p>
-                    <% } else { %>
-                        <p class="settings-muted">No API key yet. Generate one below</p>
-                    <% } %>
-                </div>
+                    </code>
+                <% } else { %>
+                    <p class="settings-muted">No API key yet. Generate one below</p>
+                <% } %>
             </div>
+            <form action="/api/v1/settings/apiKey" method="POST">
+                <button type="submit">
+                    <%= hasApiKey ? "Regenerate API key" : "Generate API key" %>
+                </button>
+            </form>
+            <% if (hasApiKey) { %>
+                <p class="settings-muted">Regenerating invalidated your previous key!</p>
+            <% } %>
         </section>
     </div>
 </div>

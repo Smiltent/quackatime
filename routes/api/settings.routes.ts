@@ -85,7 +85,23 @@ router.post("/v1/settings/goals/:id/delete", reqAuth, async (req: Request, res: 
 })
 
 router.post("/v1/settings/delete", reqAuth, async (req: Request, res: Response) => {
+    const { password, confirm } = req.body ?? {}
 
+    if (confirm !== "DELETE") {
+        return res.redirect(`/my/settings?err=${encodeURIComponent("Type DELETE to confirm")}`)
+    }
+
+    if (typeof password !== "string") {
+        return res.redirect(`/my/settings?err=${encodeURIComponent("Password is required")}`)
+    }
+
+    const result = await AuthService.deleteAccount(req.user!._id, password)
+    if ("error" in result && result.error) {
+        return res.redirect(`/my/settings?err=${encodeURIComponent(result.error)}`)
+    }
+
+    res.clearCookie("session")
+    res.redirect("/login")
 })
 
 export default router
