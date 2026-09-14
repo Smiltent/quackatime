@@ -196,7 +196,17 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: "bottom" }}
+                plugins: { 
+                    legend: { position: "bottom" },
+                    tooltip: {
+                        callbacks: {
+                            label(ctx) {
+                                const row = rows[ctx.dataIndex]
+                                return `${ctx.label}: ${row?.text ?? ctx.raw}`
+                            }
+                        }
+                    }
+                }
             }
         })
     }

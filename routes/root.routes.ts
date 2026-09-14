@@ -10,7 +10,6 @@ import Project from "@/models/Project.ts"
 
 const router = Router()
 
-
 const RANGE_PRESETS = [
     "today",
     "yesterday",
@@ -234,10 +233,10 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
                 label: d.date,
                 value: d.total_seconds
             })),
-            languages: period.languages.map(b => ({ label: b.name, value: b.total_seconds })),
-            editors: period.editors.map(b => ({ label: b.name, value: b.total_seconds })),
-            oses: period.oses.map(b => ({ label: b.name, value: b.total_seconds })),
-            projects: period.projects.map(b => ({ label: b.name, value: b.total_seconds }))
+            languages: period.languages.map(b => ({ label: b.name, value: b.total_seconds, text: b.text })),
+            editors: period.editors.map(b => ({ label: b.name, value: b.total_seconds, text: b.text })),
+            oses: period.oses.map(b => ({ label: b.name, value: b.total_seconds, text: b.text })),
+            projects: period.projects.map(b => ({ label: b.name, value: b.total_seconds, text: b.text }))
         }
     })
 

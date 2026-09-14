@@ -5,6 +5,7 @@ import HeartbeatService from "@/services/heartbeat.service.ts"
 import { reqApi } from "@/middlewares/auth.middleware.ts"
 import { Request, Response, Router } from "express"
 import type { Types } from "mongoose"
+import GoalsService from "@/services/goals.service.ts";
 
 const router = Router()
 const TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -81,7 +82,7 @@ function rangeOf(from: Date, to: Date) {
 // https://wakatime.com/developers#summaries
 function summaryPayload(aggregate: Aggregate, from: Date, to: Date) {
     return {
-        grand_totals: totals(aggregate.total_seconds),
+        grand_total: totals(aggregate.total_seconds),
         categories: aggregate.categories,
         projects: aggregate.projects,
         languages: aggregate.languages,
@@ -118,12 +119,25 @@ router.post(["/v1/users/:user/heartbeats", "/v1/users/:user/heartbeats.bulk"], r
     res.status(200).json({ responses: ress.map(r => [r.body, r.status]) })
 })
 
-router.get("/v1/users/:user/statusbar/today", reqApi, async (req: Request, res: Response) => {
+router.get(["/v1/users/:user/statusbar/today", "/v1/users/:user/status_bar/today"], reqApi, async (req: Request, res: Response) => {
     const user = resolveUser(req, res)
     if (!user) return
 
     const now = new Date()
-    const aggregate = await StatsService.today(user._id)
+    const [aggregate, goals] = await Promise.all([
+        StatsService.today(user._id),
+        GoalsService.progress(user._id)
+    ])
+
+    const data = summaryPayload(aggregate, startOfDay(now), endOfDay(now))
+    const suffix = GoalsService.statusBarSuffix(goals)
+
+    if (suffix) {
+        data.grand_total = {
+            ...data.grand_total,
+            text: `${data.grand_total.text}${suffix}`
+        }
+    }
 
     res.json({
         cached_at: new Date().toISOString(),

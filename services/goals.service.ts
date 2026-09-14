@@ -28,6 +28,25 @@ export function formatGoalMinutes(minutes: number) {
     return `${h}h ${m}m`
 }
 
+const PERIOD_SHORT = {
+    day: "daily",
+    week: "weekly",
+    month: "monthly"
+}
+
+export type GoalProgress = {
+    id: string
+    period: string
+    periodLabel: string
+    scope: string
+    seconds: number
+    progressText: string
+    targetText: string
+    percent: number
+    leftText: string
+    done: boolean
+}
+
 export default class GoalsService {
     public static readonly MAX = 3
 
@@ -134,5 +153,13 @@ export default class GoalsService {
         if (!result.deletedCount) return { error: "Goal not found" }
 
         return { ok: true as const }
+    }
+
+    public static statusBarSuffix(goals: GoalProgress[]) {
+        if (!goals.length) return ""
+        return " - " + goals.map(g => {
+            const label = PERIOD_SHORT[g.period as keyof typeof PERIOD_SHORT] ?? g.period
+            return `${g.progressText}/${g.targetText} ${label}`
+        }).join(" - ")
     }
 }

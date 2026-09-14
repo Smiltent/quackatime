@@ -61,7 +61,7 @@ export default class HeartbeatService {
         const project = await Project.findOneAndUpdate(
             { user: userId, name },
             { $setOnInsert: { user: userId, name } },
-            { upsert: true, new: true }
+            { upsert: true, returnDocument: 'after' }
         )
 
         return project._id

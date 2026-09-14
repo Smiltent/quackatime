@@ -17,24 +17,20 @@
             <div class="settings-kv">
                 <% if (revealedKey) { %>
                     <h2>Config</h2>
-                    <code id="apiKey">
-# put this in your ~/.wakatime.cfg file
+                    <code id="apiKey"># put this in your ~/.wakatime.cfg file
 
 [settings]
-api_url = https://<%= url %>/api/v1
+api_url = <%= apiBase %>/api/v1
 api_key = <%= revealedKey %>
-heartbeat_rate_limit_seconds = 30                       
-                    </code>
+heartbeat_rate_limit_seconds = 30</code>
                 <% } else if (hasApiKey) { %>
                     <h2>Config</h2>
-                    <code id="is-masked">
-# put this in your ~/.wakatime.cfg file
+                    <code id="is-masked"># put this in your ~/.wakatime.cfg file
 
 [settings]
 api_url = <%= apiBase %>/api/v1
 api_key = ************************************
-heartbeat_rate_limit_seconds = 30   
-                    </code>
+heartbeat_rate_limit_seconds = 30</code>
                 <% } else { %>
                     <p class="settings-muted">No API key yet. Generate one below</p>
                 <% } %>
