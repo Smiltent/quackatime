@@ -845,6 +845,205 @@ body {
 
 
 
+.dashboard .settings-banner {
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-bottom: 0;
+    padding: 0.75rem 1rem;
+    font-size: 13px;
+}
+
+.dashboard .settings-banner.is-error {
+    color: #f2a0a0;
+    background-color: color-mix(in srgb, #ff4d4d 6%, transparent);
+}
+
+.dashboard .settings-banner.is-ok {
+    color: var(--primary);
+    background-color: color-mix(in srgb, var(--primary) 6%, transparent);
+}
+
+.dashboard .settings-real {
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard .settings-sec,
+.dashboard .settings-real > section {
+    padding: 1.1rem 1rem 1.25rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.dashboard .settings-sec:last-child,
+.dashboard .settings-real > section:last-child {
+    border-bottom: 0;
+}
+
+.dashboard .settins-sec h2,
+.dashboard .settings-real > section h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+}
+
+.dashboard .settings-sec.is-danger h2 {
+    color: #f2a0a0;
+}
+
+.dashboard .settings-muted {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    margin-bottom: 0.75rem;
+}
+
+.dashboard .settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 22rem;
+}
+
+.dashboard .settings-form-inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    max-width: none;
+}
+
+.dashboard .settings-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+}
+
+.dashboard .settings-form label span,
+.dashboard .settings-label {
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.dashboard .settings-form input,
+.dashboard .settings-form select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.65rem 0.75rem;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    color: var(--text);
+    background: transparent;
+    font-size: 14px;
+}
+
+.dashboard .settings-form input:focus,
+.dashboard .settings-form select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.dashboard .settings-form select {
+    color-scheme: dark;
+}
+
+.dashboard .settings-form button,
+.dashboard .settings-sec > form > button,
+.dashboard .settings-real > section > form > button {
+    align-self: flex-start;
+    padding: 0.65rem 1rem;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.dashboard .settings-form button:hover,
+.dashboard .settings-sec > form > button:hover,
+.dashboard .settings-real > section > form > button:hover {
+    border-color: var(--primary);
+    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.dashboard .settings-form button.is-danger {
+    color: #f2a0a0;
+    border-color: rgba(242, 160, 160, 0.35);
+}
+
+.dashboard .settings-form button.is-danger:hover {
+    border-color: #f2a0a0;
+    background: color-mix(in srgb, #ff4d4d 10%, transparent);
+}
+
+.dashboard .settings-goals {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 1rem;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.dashboard .settings-goals > div,
+.dashboard .settings-goal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.dashboard .settings-goals > div:last-of-type,
+.dashboard .settings-goal:last-child {
+    border-bottom: 0;
+}
+
+.dashboard .settings-goal-title {
+    font-size: 14px;
+    margin-bottom: 0.2rem;
+}
+
+.dashboard .settings-goals button,
+.dashboard .settings-goal button {
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.dashboard .settings-goals button:hover,
+.dashboard .settings-goal button:hover {
+    color: #f2a0a0;
+}
+
+.dashboard .settings-kv code,
+.dashboard .settings-real code {
+    display: block;
+    margin-top: 0.35rem;
+    padding: 0.75rem 0.85rem;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.dashboard .settings-real code#is-masked {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.dashboard .settings-steps {
+    margin: 0 0 1.1rem 1.1rem;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+.dashboard .settings-steps code {
+    font-size: 12px;
+}
+
 @media (max-width: 960px) {
     .dashboard {
         padding-top: 0;

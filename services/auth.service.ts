@@ -1,8 +1,12 @@
 
 import { SESSION_TTL_MS } from "@/util/config.ts"
+import Heartbeat from "@/models/Heartbeat.ts"
+import Summary from "@/models/Summary.ts"
 import Session from "@/models/Session.ts"
+import Project from "@/models/Project.ts"
 import ApiKey from "@/models/ApiKey.ts"
 import type { Types } from "mongoose"
+import Goal from "@/models/Goal.ts"
 import User from "@/models/User.ts"
 import crypto from "node:crypto"
 import bcrypt from "bcrypt"
@@ -34,6 +38,94 @@ export default class AuthService {
         const valid = await bcrypt.compare(password, user.password)
         return valid ? user : null
     }
+
+
+
+
+
+    //? =-=-= USER SESSIONS MANAGEMENT =-=-=
+    // modify a user
+    public static async updateProfile(userId: Types.ObjectId, data: { username?: string, displayName?: string, email?: string }) {
+        const updates: Record<string, string> = {}
+
+        if (data.username) {
+            const username = data.username.trim()
+            if (!username || username.length > 32) {
+                return { error: "Username must be 1-32 characters" }
+            }
+
+            const taken = await User.exists({ username, _id: { $ne: userId }})
+            if (taken) return { error: "Username already taken" }
+
+            updates.username = username
+        }
+
+        if (data.displayName) {
+            const displayName = data.displayName.trim()
+            if (!displayName || displayName.length > 64) {
+                return { error: "Display name must be 1-64 characters" }
+            }
+
+            updates.displayName = displayName
+        }
+
+        if (data.email) {
+            const email = data.email.trim().toLowerCase()
+            if (!email.includes("@")) return { error: "Invalid email" }
+
+            const taken = await User.exists({ email, _id: { $ne: userId }})
+            if (taken) return { error: "Email already taken" }
+
+            updates.email = email
+        }
+
+        if (!Object.keys(updates).length) return { error: "Nothing to update..." }
+        await User.updateOne({ _id: userId }, { $set: updates })
+
+        return { ok: true as const }
+    }
+
+    // change a users password
+    public static async changePassword(userId: Types.ObjectId, currentPass: string, nextPass: string) {
+        if (!nextPass || nextPass.length < 4) {
+            return { error: "New password must be at least 4 characters" }
+        }
+
+        const user = await User.findById(userId)
+        if (!user) return { error: "User not found" }
+
+        const valid = await bcrypt.compare(currentPass, user.password)
+        if (!valid) return { error: "Current password is incorrect" }
+
+        user.password = await bcrypt.hash(nextPass, 10)
+        await user.save()
+
+        return { ok: true as const }
+    }
+
+    // delete user
+    public static async deleteAccount(userId: Types.ObjectId, password: string) {
+        const user = await User.findById(userId)
+        if (!user) return { error: "User not found" }
+
+        const valid = await bcrypt.compare(password, user.password)
+        if (!valid) return { error: "Password is incorrect" }
+
+        await Promise.all([
+            Heartbeat.deleteMany({ user: userId }),
+            Summary.deleteMany({ user: userId }),
+            Goal.deleteMany({ user: userId }),
+            Project.deleteMany({ user: userId }),
+            ApiKey.deleteMany({ user: userId }),
+            Session.deleteMany({ user: userId })
+        ])
+
+        await User.deleteOne({ _id: userId })
+        return { ok: true as const }
+    }
+
+
+
 
     //? =-=-= USER SESSIONS MANAGEMENT =-=-=
 
@@ -74,6 +166,10 @@ export default class AuthService {
         await Session.deleteMany({ user: userId })
     }
 
+
+
+
+
     //? =-=-= WAKATIME COMPATIBLE API KEY MANAGEMENT =-=-=
 
     // create a wakatime key
@@ -101,6 +197,17 @@ export default class AuthService {
         if (!apiKey) return null
         
         return User.findById(apiKey.user)
+    }
+
+    // regen api
+    public static async regenerateApiKey(userId: Types.ObjectId) {
+        await ApiKey.deleteMany({ user: userId })
+        return this.createApiKey(userId)
+    }
+
+    // check if has api key
+    public static async hasApiKey(userId: Types.ObjectId) {
+        return Boolean(await ApiKey.exists({ user: userId }))
     }
 
     // revoke a wakatime key

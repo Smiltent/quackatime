@@ -1,0 +1,22 @@
+
+<div class="settings">
+    <div class="left">
+        <a href="/my/settings" class="<%= tab === 'account' ? 'active' : '' %>">
+            <i class="fa-solid fa-user"></i> Account
+        </a>
+
+        <div class="splitter" ></div>
+
+        <a href="/my/settings/setup" class="<%= tab === 'setup' ? 'active' : '' %>">
+            <i class="fa-solid fa-plug"></i> Setup
+        </a>
+
+        <div class="splitter"></div>
+
+        <a href="/my/settings/security" class="<%= tab === 'security' ? 'active' : '' %>">
+            <i class="fa-solid fa-lock"></i> Security
+        </a>
+    </div>
+
+    <div class="fill"></div>
+</div>

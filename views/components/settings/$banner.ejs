@@ -1,0 +1,14 @@
+    
+<% if (error) { %>
+    <div class="settings-banner is-error"><%= error %></div>
+<% } else if (ok === 'profile') { %>
+    <div class="settings-banner is-ok">Profile updated</div>
+<% } else if (ok === 'pass') { %>
+    <div class="settings-banner is-ok">Password changed</div>
+<% } else if (ok === 'apikey') { %>
+    <div class="settings-banner is-ok">API key generated! Copy it now, as it won't be shown again</div>
+<% } else if (ok === 'goal') { %>
+    <div class="settings-banner is-ok">Goal created</div>
+<% } else if (ok === 'delgoal') { %>
+    <div class="settings-banner is-ok">Goal removed</div>
+<% } %>

@@ -1,0 +1,46 @@
+
+<div class="dashboard">
+    <%- include("../components/$header") %>
+
+    <%- include("../components/settings/$nav") %>
+
+    <%- include("../components/settings/$banner") %>
+
+    <div class="settings-real">
+        <section class="settings-sec">
+            <h2>Tracking setup</h2>
+            <p class="settings-muted">
+                Install any WakaTime-compatible plugin, then point it at this server and paste your API key.
+            </p>
+            <div class="settings-kv">
+                <div>
+
+                </div>
+                <div>
+                    <% if (revealedKey) { %>
+                        <code id="apiKey">
+# put this in your ~/.wakatime.cfg file
+
+[settings]
+api_url = https://<%= url %>/api/v1
+api_key = <%= revealedKey %>
+heartbeat_rate_limit_seconds = 30                       
+                        </code>
+                    <% } else if (hasApiKey) { %>
+                        <code id="is-masked">
+# put this in your ~/.wakatime.cfg file
+
+[settings]
+api_url = <%= apiBase %>/api/v1
+api_key = ************************************
+heartbeat_rate_limit_seconds = 30   
+                        </code>
+                        <p class="settings-muted">Key is hidden. Regenerate to reveal a new one</p>
+                    <% } else { %>
+                        <p class="settings-muted">No API key yet. Generate one below</p>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

@@ -1,0 +1,72 @@
+
+<div class="dashboard">
+    <%- include("../components/$header") %>
+
+    <%- include("../components/settings/$nav") %>
+
+    <%- include("../components/settings/$banner") %>
+
+    <div class="settings-real">
+        <section class="settings-sec">
+            <h2>Profile</h2>
+            <form action="/api/v1/settings/profile" method="POST" class="settings-form">
+                <label>
+                    <span>Username</span>
+                    <input type="text" name="username" maxlength="32" required value="<%= profile.username %>" autocomplete="username">
+                </label>
+                <label>
+                    <span>Display Name</span>
+                    <input type="text" name="displayName" maxlength="64" required value="<%= profile.username %>" autocomplete="nickname">
+                </label>
+                <label>
+                    <span>Email</span>
+                    <input type="email" name="email" required value="<%= profile.username %>" autocomplete="email">
+                </label>
+                
+                <button type="submit">Save profile</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Goals</h2>
+
+            <% if (goals.length) { %>
+                <div class="settings-goals">
+                    <% goals.forEach(goal => { %>
+                        <div>
+                            <p class="settings-goal-title"><%= goal.periodLabel %> . <%= goal.targetText %></p>
+                            <p class="settings-muted"><%= goal.progressText %> / <%= goal.targetText %> . <%= goal.scope %></p>
+                        </div>
+                        <form action="/api/v1/settings/goals/<%= goal.id %>/delete" method="POST">
+                            <button type="submit" title="Delete goal" aria-label="Delete goal">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p class="settings-muted">No goals yet</p>
+            <% } %>
+
+            <% if (goalsRemaining > 0) { %>
+                <form action="/api/v1/settings/goals" class="settings-form settings-form-inline" method="POST">
+                    <label>
+                        <span>Hours</span>
+                        <input type="number" name="hours" min="0.25" step="0.25" value="1" required>
+                    </label>
+                    <label>
+                        <span>Period</span>
+                        <select name="period" required>
+                            <option value="day">Daily</option>
+                            <option value="week">Weekly</option>
+                            <option value="month">Monthly</option>
+                        </select>
+                    </label>
+                    <button type="submit">Add goal</button>
+                </form>
+            <% } else { %>
+                <p class="settings-muted">Maximum of <%= goalsMax %> goals reached</p>
+            <% } %>
+        </section>
+    </div>
+</div>

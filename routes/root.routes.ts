@@ -1,11 +1,12 @@
 
+import { human, endOfDay, startOfDay, startOfWeek, startOfMonth, startOfYear, addDays, dateKey } from "@/util/time.ts"
 import LeaderboardService, { LeaderboardPeriod, LeaderboardPeriods } from "@/services/leaderboard.service.ts"
 import { optionalAuth, reqAuth } from "@/middlewares/auth.middleware.ts"
 import StatsService from "@/services/stats.service.ts"
 import GoalsService from "@/services/goals.service.ts"
+import AuthService from "@/services/auth.service.ts"
 import { Request, Response, Router } from 'express'
 import Project from "@/models/Project.ts"
-import { human, endOfDay, startOfDay, startOfWeek, startOfMonth, startOfYear, addDays, dateKey } from "@/util/time.ts"
 
 const router = Router()
 
@@ -372,19 +373,66 @@ router.get("/leaderboard", reqAuth, async (req: Request, res: Response) => {
 })
 
 
-// settings
-/*
-router.get("/my/settings", reqAuth, async (req: Request, res: Response) => {
 
+
+
+// settings
+function settingsFlash(req: Request) {
+    return {
+        error: typeof req.query.err === "string"
+            ? req.query.err
+            : typeof req.query.error === "string"
+                ? req.query.error
+                : null,
+        ok: typeof req.query.ok === "string" ? req.query.ok : null
+    }
+}
+
+router.get("/my/settings", reqAuth, async (req: Request, res: Response) => {
+    const user = req.user!
+    const goals = await GoalsService.progress(user._id)
+
+    res.render("settings/account", {
+        tab: "account",
+        profile: {
+            username: user.username,
+            displayName: user.displayName,
+            email: user.email
+        },
+        goals,
+        goalsMax: GoalsService.MAX,
+        goalsRemaining: Math.max(0, GoalsService.MAX - goals.length),
+        ...settingsFlash(req)
+    })
 })
 
 router.get("/my/settings/setup", reqAuth, async (req: Request, res: Response) => {
+    const user = req.user!
+    const hasApiKey = await AuthService.hasApiKey(user._id)
+    
+    let revealedKey = null
+    if (typeof req.cookies?.api_key_once === "string") {
+        revealedKey = req.cookies.api_key_once
+        res.clearCookie("api_key_once")
+    }
 
+    const host = req.get("host") || "localhost"
+    const apiBase = `${req.protocol}://${host}`
+
+    res.render("settings/setup", {
+        tab: "setup",
+        hasApiKey,
+        revealedKey,
+        apiBase,
+        ...settingsFlash(req)
+    })
 })
 
 router.get("/my/settings/security", reqAuth, async (req: Request, res: Response) => {
-
+    res.render("settings/security", {
+        tab: "security",
+        ...settingsFlash(req)
+    })
 })
-*/
 
 export default router

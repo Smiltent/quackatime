@@ -1,0 +1,29 @@
+
+<div class="dashboard">
+    <%- include("../components/$header") %>
+
+    <%- include("../components/settings/$nav") %>
+
+    <%- include("../components/settings/$banner") %>
+
+    <div class="settings-real">
+        <section class="settings-sec">
+            <h2>Change password</h2>
+            <form class="settings-form" action="/api/v1/settings/password" method="POST">
+                <label>
+                    <span>Current password</span>
+                    <input type="password" name="currentPass" required autocomplete="current-password">
+                </label>
+                <label>
+                    <span>New password</span>
+                    <input type="password" name="newPass" required autocomplete="new-password">
+                </label>
+                <label>
+                    <span>Confirm new password</span>
+                    <input type="password" name="confirmPass" required autocomplete="new-password">
+                </label>
+                <button type="submit">Update password</button>
+            </form>
+        </section>
+    </div>
+</div>

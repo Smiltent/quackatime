@@ -29,6 +29,8 @@ export function formatGoalMinutes(minutes: number) {
 }
 
 export default class GoalsService {
+    public static readonly MAX = 3
+
     private static windowStart(period: string, now: Date) {
         if (period === "day") return startOfDay(now)
         if (period === "week") return startOfWeek(now)
@@ -94,5 +96,43 @@ export default class GoalsService {
                 done: seconds >= target
             }
         })
+    }
+
+    public static async list(userId: Types.ObjectId) {
+        return await Goal.find({ user: userId }).sort({ createdAt: 1}).lean()
+    }
+
+    public static async create(userId: Types.ObjectId, data: { amount: number, period: string }) {
+        const count = await Goal.countDocuments({ user: userId })
+        if (count >= this.MAX) {
+            return { error: `You can only have ${this.MAX} goals` }
+        }
+
+        const period = data.period
+        if (period !== "day" && period !== "week" && period !== "month") {
+            return { error: "Invalid period" }
+        }
+
+        const amount = Math.round(data.amount)
+        if (!Number.isFinite(amount) || amount < 1) {
+            return { error: "Amount must be at least 1 minute" }
+        }
+
+        const goal = await Goal.create({
+            user: userId,
+            amount,
+            period,
+            languages: [],
+            projects: []
+        })
+
+        return { goal }
+    }
+
+    public static async remove(userId: Types.ObjectId, goalId: string) {
+        const result = await Goal.deleteOne({ _id: goalId, user: userId })
+        if (!result.deletedCount) return { error: "Goal not found" }
+
+        return { ok: true as const }
     }
 }
