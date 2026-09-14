@@ -1,5 +1,6 @@
 <h1 align="center">Quackatime</h1>
 <p align="center"><em>a WakaTime-compatible backend for coding statistics that Quacks</em></p>
+<img src="_header.png">
 
 # About
 An alternative to WakaTime, which you can self-host!  
