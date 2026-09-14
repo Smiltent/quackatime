@@ -6,6 +6,10 @@
 An alternative to WakaTime, which you can self-host!  
 Hugely insprired by WakaTime and [Hackatime](https://github.com/hackclub/hackatime) (helped me figure out the API endpoints).  
 
+# Public test instance
+You can try out Hackatime on the public test instance!  
+https://hackati.me
+
 # Features
 * [x] Tracking Time
 * [x] Leaderboards (Daily, Weekly)
