@@ -8,7 +8,7 @@ Hugely insprired by WakaTime and [Hackatime](https://github.com/hackclub/hackati
 
 # Public test instance
 You can try out Hackatime on the public test instance!  
-https://hackati.me
+https://quackati.me
 
 # Features
 * [x] Tracking Time
